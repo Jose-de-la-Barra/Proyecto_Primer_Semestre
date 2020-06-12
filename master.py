@@ -15,6 +15,7 @@ class VentanaJuego(arcade.Ventana):
 VentanaJuego(1280, 720, 'La ventana del juego')
 
 # comentario
+# git pull
 
 arcade.run()
 
