@@ -18,7 +18,7 @@ escala_gel=0.05
 class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(SCREE_WIDHT,SCREE_HEIGHT, SCREE_TITLE)
-        arcade.set_background_color(arcade.color.AMARANTH_PINK)
+        arcade.set_background_color(arcade.color.ALICE_BLUE)
 
         self.player_list=None #LISTA QUE CONTIENE PERSONAJE
         self.virus_list=None
