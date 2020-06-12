@@ -6,7 +6,7 @@ import arcade
 # En la variable self se va a guardar la referencia al objeto que esté creando
 # Super sirve para darle más importancia a una clase secundaria y poder ocuparla sin ocupar su nombre.
 
-class VentanaJuego(arcade.Window):
+class VentanaJuego(arcade.Ventana):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         self.set_location(80, 50)
