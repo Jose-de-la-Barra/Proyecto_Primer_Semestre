@@ -15,6 +15,8 @@ escala_guantes = 0.05
 escala_mask = 0.10
 escala_gel = 0.05
 
+MOVEMENT_SPEED = 5
+
 
 class MyGame(arcade.Window):
     def __init__(self):
@@ -31,11 +33,17 @@ class MyGame(arcade.Window):
         self.pisos_sprite = None
         self.objetos_sprite = None
 
+        self.physics_engine = None
+        self.wall_list = None
+
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
         self.virus_list = arcade.SpriteList()
         self.pisos_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
+
+#        self.player_list.append(self.player_sprite)
+        self.wall_list = arcade.SpriteList()
 
         # Crear personaje
         personaje = "monito.png"
@@ -57,12 +65,14 @@ class MyGame(arcade.Window):
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
+            self.wall_list.append(piso)
 
         coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
         for p in coordenas_pisoflotante:
             pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
             pisoaire.position = p
             self.pisos_list.append(pisoaire)
+            self.wall_list.append(pisoaire)
 
         # crear objetos
 
@@ -86,6 +96,9 @@ class MyGame(arcade.Window):
                 material = arcade.Sprite(o, escala_mask)
                 material.position = j
                 self.objetos_list.append(material)
+
+        self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                         self.wall_list)
 
 
         #random objetos
@@ -129,6 +142,32 @@ class MyGame(arcade.Window):
         self.virus_list.draw()
         self.pisos_list.draw()
         self.objetos_list.draw()
+        self.wall_list.draw()
+
+    def on_key_press(self, key, modifiers):
+        """Called whenever a key is pressed. """
+
+        if key == arcade.key.UP:
+            self.player_sprite.change_y = MOVEMENT_SPEED
+        elif key == arcade.key.LEFT:
+            self.player_sprite.change_x = -MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT:
+            self.player_sprite.change_x = MOVEMENT_SPEED
+
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key. """
+
+        if key == arcade.key.UP:
+            self.player_sprite.change_y = 0
+        elif key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.player_sprite.change_x = 0
+
+    def on_update(self, delta_time):
+        """ Movement and game logic """
+
+        # Call update on all sprites (The sprites don't do much in this
+        # example though.)
+        self.physics_engine.update()
 
 
 def main():
