@@ -46,6 +46,8 @@ class MyGame(arcade.Window):
         self.wall_list = None  # creamos esta característica para más adelante poder identificar ciertos objetos que no se pueden atravesar (piso, piso flotante).
 
         self.collect_objetos_sound = arcade.load_sound("Recoger.mp3") #Sonido cuando toma cosas el personaje
+        self.jump_sound = arcade.load_sound("salto.mp3") #Efecto de sonido cuando salta el personaje
+
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
         self.virus_list = arcade.SpriteList()
@@ -165,7 +167,7 @@ class MyGame(arcade.Window):
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
-
+                arcade.play_sound(self.jump_sound)
         elif key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
