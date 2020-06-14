@@ -45,6 +45,7 @@ class MyGame(arcade.Window):
         self.physics_engine = None  # le damos características de la función physics_engine a nuestro objeto
         self.wall_list = None  # creamos esta característica para más adelante poder identificar ciertos objetos que no se pueden atravesar (piso, piso flotante).
 
+        self.collect_objetos_sound = arcade.load_sound("Recoger.mp3") #Sonido cuando toma cosas el personaje
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
         self.virus_list = arcade.SpriteList()
@@ -108,7 +109,6 @@ class MyGame(arcade.Window):
                 self.objetos_list.append(material)
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
-
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
 
     def gravedad(self):
@@ -178,6 +178,15 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):  # Actualización
         self.physics_engine.update()
+
+        #Mira si golpeamos algun objeto
+        objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite,self.objetos_list)
+        #Recorre cada objeto que golpeamos (si hay alguno) y lo retira el objeto de  para monedas en objetos_hit_list:
+        for objetos in objetos_hit_list:
+            # Remueve el objeto
+            objetos.remove_from_sprite_lists()
+            # Hace un sonido al "tomar" el objeto
+            arcade.play_sound(self.collect_objetos_sound)
 
 
 def main():
