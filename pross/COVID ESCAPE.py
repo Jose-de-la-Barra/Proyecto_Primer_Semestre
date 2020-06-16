@@ -80,35 +80,72 @@ class MyGame(arcade.Window):
             self.wall_list.append(piso)  # el piso no se puede atravesar
 
         # asignar coordenadas fijas a el piso flotante
-        coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
-        for p in coordenas_pisoflotante:
-            pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
-            pisoaire.position = p
-            self.pisos_list.append(pisoaire)
-            self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
+        coordenas_pisoflotante = [[64,320],[600,200],[520, 430],[650,430], [930,430],[255, 200], [945, 200], [400, 320], [780, 320],[1107, 310], [180, 460], [1107, 450]]
+        n = 1
+        cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
+        cte_eje_y = 50
+        while n <= 9:
+            coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante)
+            coordenas_pisoflotante.remove(coordenas__choicepisoflotante)
+
+            cordenadas_lista=[coordenas__choicepisoflotante]
+
+            for p in cordenadas_lista:
+                pisoaire=arcade.Sprite("Piso flotante.png",escala_pisovolador)
+                pisoaire.position=p
+                self.pisos_list.append(pisoaire)
+                self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
+                n=n+1
+                
+
+                o = random.choice(cosas)
+
+                if o == "alcohol gel.png":
+                    material = arcade.Sprite(o, escala_gel)
+                    material.position = p[0],p[1]+cte_eje_y
+                    self.objetos_list.append(material)
+
+                elif o == "guantes.png":
+                    material = arcade.Sprite(o, escala_guantes)
+                    material.position = p[0],p[1]+cte_eje_y
+                    self.objetos_list.append(material)
+
+                elif o == "mascara.png":
+                    material = arcade.Sprite(o, escala_mask)
+                    material.position = p[0],p[1]+cte_eje_y
+                    self.objetos_list.append(material)
+
+
+
+       # coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
+        #for p in coordenas_pisoflotante:
+         #   pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
+          #  pisoaire.position = p
+           # self.pisos_list.append(pisoaire)
+            #self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
 
         # CREAR OBJETOS
 
-        cordenadas_objetos = [[600, 480], [255, 250], [945, 250], [420, 370], [780, 370], [180, 510], [1107, 500]]
-        cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
+        #cordenadas_objetos = [[600, 480], [255, 250], [945, 250], [420, 370], [780, 370], [180, 510], [1107, 500]]
+        #cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
 
-        for j in cordenadas_objetos:
-            o = random.choice(cosas)
+        #for j in cordenadas_objetos:
+         #   o = random.choice(cosas)
 
-            if o == "alcohol gel.png":
-                material = arcade.Sprite(o, escala_gel)
-                material.position = j
-                self.objetos_list.append(material)
+          #  if o == "alcohol gel.png":
+           #     material = arcade.Sprite(o, escala_gel)
+            #    material.position = j
+             #   self.objetos_list.append(material)
 
-            elif o == "guantes.png":
-                material = arcade.Sprite(o, escala_guantes)
-                material.position = j
-                self.objetos_list.append(material)
+            #elif o == "guantes.png":
+             #   material = arcade.Sprite(o, escala_guantes)
+              #  material.position = j
+               # self.objetos_list.append(material)
 
-            elif o == "mascara.png":
-                material = arcade.Sprite(o, escala_mask)
-                material.position = j
-                self.objetos_list.append(material)
+#            elif o == "mascara.png":
+ #               material = arcade.Sprite(o, escala_mask)
+  #              material.position = j
+   #             self.objetos_list.append(material)
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -117,42 +154,6 @@ class MyGame(arcade.Window):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
                                                              self.wall_list,
                                                              gravity_constant=GRAVITY)
-
-        #random objetos
-        #k=1
-#        while k<=10:
- #           coordenas_objetos= [[random.randint(0,1200),random.randint(40,550)]]
-  #          cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
-   #         o=random.choice(cosas)
-    #        for j in coordenas_objetos:
-     #           if o=="alcohol gel.png":
-      #              material=arcade.Sprite(o,escala_gel)
-       #             material.position=j
-        #            self.objetos_list.append(material)
-         #           k+=1
-          #      elif o=="guantes.png":
-           #         material = arcade.Sprite(o, escala_guantes)
-            #        material.position = j
-             #       self.objetos_list.append(material)
-              #      k += 1
-               # elif o=="mascara.png":
-                #    material = arcade.Sprite(o, escala_mask)
-                 #   material.position = j
-                  #  self.objetos_list.append(material)
-                   # k += 1
-
-
-        #MAPA ALEATORIO
-#        n=1
- #       while n<=4:
-  #          coordenas_pisoflotante = [[random.randint(0, 1200), random.randint(200, 450)]]
-   #         for p in coordenas_pisoflotante:
-    #            pisoaire=arcade.Sprite("Piso flotante.png",escala_pisovolador)
-     #           pisoaire.position=p
-      #          self.pisos_list.append(pisoaire)
-       #         n=n+1
-        #        print(p)
-
 
     def on_draw(self):
         arcade.start_render()
