@@ -24,6 +24,12 @@ JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
 
+# Cuántos píxeles para mantener como margen mínimo entre el personaje
+# y el borde de la pantalla.
+#LEFT_VIEWPORT_MARGIN = 0
+#RIGHT_VIEWPORT_MARGIN = 0
+#BOTTOM_VIEWPORT_MARGIN = 0
+#TOP_VIEWPORT_MARGIN = 0
 
 class MyGame(arcade.Window):
     def __init__(self):
@@ -50,6 +56,12 @@ class MyGame(arcade.Window):
 
         self.collect_objetos_sound = arcade.load_sound("Recoger.mp3") #Sonido cuando toma cosas el personaje
         self.jump_sound = arcade.load_sound("salto.mp3") #Efecto de sonido cuando salta el personaje
+
+        # Se utiliza para realizar un seguimiento de nuestro desplazamiento
+        self.view_bottom = 0
+        self.view_left = 0
+
+        self.score = 0 #Lleva un registro de la puntuación
 
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
@@ -81,6 +93,11 @@ class MyGame(arcade.Window):
             self.decoración_sprite.center_y = 80
             self.decoración_list.append(self.decoración_sprite)
 
+        # Se utiliza para realizar un seguimiento de nuestro desplazamiento
+        self.view_bottom = 0
+        self.view_left = 0
+        #Puntuación
+        self.score = 0 #Lleva un registro de la puntuación
 
 
         for i in range (0,1200,150):
@@ -179,13 +196,17 @@ class MyGame(arcade.Window):
         self.objetos_list.draw()
         self.wall_list.draw()
 
+        #Dibuja nuestro puntaje en la pantalla, desplazándolo con la ventana gráfica
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10 , 10 , arcade.csscolor.WHITE, 18)
+
 
     def on_key_press(self, key, modifiers):  # se llama cada vez que presionamos una tecla
 
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
-                arcade.play_sound(self.jump_sound)
+                arcade.play_sound(self.jump_sound)#Efecto sonido de salto cuando se presiona la tecla "UP"
         elif key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
@@ -207,8 +228,48 @@ class MyGame(arcade.Window):
             objetos.remove_from_sprite_lists()
             # Hace un sonido al "tomar" el objeto
             arcade.play_sound(self.collect_objetos_sound)
+            self.score += 1 #Agrega uno al puntaje
 
+        # --- Administrar desplazamiento ---
 
+        # Rastrear si necesitamos cambiar la ventana gráfica
+        #changed = False
+
+        # Desplazarse a la izquierda
+        #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+        #if self.player_sprite.left < left_boundary:
+            #self.view_left -= left_boundary - self.player_sprite.left
+            #changed = True
+
+        # Desplazarse a la derecha
+        #right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+        #if self.player_sprite.right > right_boundary:
+            #self.view_left += self.player_sprite.right - right_boundary
+            #changed = True
+
+        # Desplazarse hacia arriba
+        #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+        #if self.player_sprite.top > top_boundary:
+            #self.view_bottom += self.player_sprite.top - top_boundary
+            #changed = True
+
+        # Desplazarse hacia abajo
+        #bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+        #if self.player_sprite.bottom < bottom_boundary:
+            #self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+            #changed = True
+
+        #if changed:
+            # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
+            # no se alineen en la pantalla
+            #self.view_bottom = int(self.view_bottom)
+            #self.view_left = int(self.view_left)
+
+           # Do the scrolling
+            #arcade.set_viewport(self.view_left,
+                                #SCREE_WIDHT + self.view_left,
+                                #self.view_bottom,
+                                #SCREE_HEIGHT + self.view_bottom)
 def main():
     window = MyGame()
     window.setup()
