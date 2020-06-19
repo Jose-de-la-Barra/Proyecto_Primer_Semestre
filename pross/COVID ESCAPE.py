@@ -10,13 +10,14 @@ SCREE_TITLE = "COVID ESCAPE"
 
 
 # constantes para escalar sprites
-escala_personaje = 0.20
-escala_virus = 0.17
-escala_piso = 0.30
-escala_pisovolador = 0.30
+escala_personaje = 0.9
+escala_virus = 0.15
+escala_piso = 0.5
+escala_pisovolador = 0.5
 escala_guantes = 0.05
 escala_mask = 0.10
-escala_gel = 0.05
+escala_gel = 0.07
+escala_sol = 0.5
 
 # características de la fisica del juego
 JUMP_SPEED = 15
@@ -36,11 +37,13 @@ class MyGame(arcade.Window):
         self.virus_list = None  # ...
         self.pisos_list = None
         self.objetos_list = None
+        self.decoración_list = None
 
         self.player_sprite = None  # VARIABLE DEL SPRITE
         self.virus_sprite = None  # VARIABLE DEL SPRITE
         self.pisos_sprite = None  # ...
         self.objetos_sprite = None
+        self.decoración_sprite = None
 
         self.physics_engine = None  # le damos características de la función physics_engine a nuestro objeto
         self.wall_list = None  # creamos esta característica para más adelante poder identificar ciertos objetos que no se pueden atravesar (piso, piso flotante).
@@ -53,12 +56,42 @@ class MyGame(arcade.Window):
         self.virus_list = arcade.SpriteList()
         self.pisos_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
+        self.decoración_list = arcade.SpriteList()
 
 #        self.player_list.append(self.player_sprite)
         self.wall_list = arcade.SpriteList()
+        #AMBIENTE
+        sol = "sun1.png"
+        self.decoración_sprite = arcade.Sprite(sol, escala_sol)
+        self.decoración_sprite.center_x = 74
+        self.decoración_sprite.center_y = 560
+        self.decoración_list.append(self.decoración_sprite)
+
+        letrero = "sign.png"
+        self.decoración_sprite = arcade.Sprite(letrero, 0.7)
+        self.decoración_sprite.center_x = 670
+        self.decoración_sprite.center_y = 108
+        self.decoración_list.append(self.decoración_sprite)
+
+        piedra_x = [200,690]
+        for k in range(len(piedra_x)):
+            piedra = "rock.png"
+            self.decoración_sprite = arcade.Sprite(piedra, 0.3)
+            self.decoración_sprite.center_x = piedra_x[k]
+            self.decoración_sprite.center_y = 80
+            self.decoración_list.append(self.decoración_sprite)
+
+
+
+        for i in range (0,1200,150):
+            pasto = arcade.Sprite("grass.png", escala_sol)
+            pasto.center_x = i
+            pasto.center_y = 93
+            self.decoración_list.append(pasto)
+
 
         # Crear personaje
-        personaje = "monito.png"
+        personaje = "adventurer_swim1.png"
         self.player_sprite = arcade.Sprite(personaje, escala_personaje)
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 93
@@ -72,8 +105,8 @@ class MyGame(arcade.Window):
         self.virus_list.append(self.virus_sprite)
 
         # crear piso con un loop de la imagen
-        for i in range(0, 1300, 114):
-            piso = arcade.Sprite("piso.png", escala_piso)
+        for i in range(0, 1300, 64):
+            piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
@@ -91,12 +124,12 @@ class MyGame(arcade.Window):
             cordenadas_lista=[coordenas__choicepisoflotante]
 
             for p in cordenadas_lista:
-                pisoaire=arcade.Sprite("Piso flotante.png",escala_pisovolador)
+                pisoaire=arcade.Sprite("ground_grass_small_broken.png",escala_pisovolador)
                 pisoaire.position=p
                 self.pisos_list.append(pisoaire)
                 self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
                 n=n+1
-                
+
 
                 o = random.choice(cosas)
 
@@ -117,6 +150,7 @@ class MyGame(arcade.Window):
 
 
 
+
        # coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
         #for p in coordenas_pisoflotante:
          #   pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
@@ -124,28 +158,7 @@ class MyGame(arcade.Window):
            # self.pisos_list.append(pisoaire)
             #self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
 
-        # CREAR OBJETOS
 
-        #cordenadas_objetos = [[600, 480], [255, 250], [945, 250], [420, 370], [780, 370], [180, 510], [1107, 500]]
-        #cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
-
-        #for j in cordenadas_objetos:
-         #   o = random.choice(cosas)
-
-          #  if o == "alcohol gel.png":
-           #     material = arcade.Sprite(o, escala_gel)
-            #    material.position = j
-             #   self.objetos_list.append(material)
-
-            #elif o == "guantes.png":
-             #   material = arcade.Sprite(o, escala_guantes)
-              #  material.position = j
-               # self.objetos_list.append(material)
-
-#            elif o == "mascara.png":
- #               material = arcade.Sprite(o, escala_mask)
-  #              material.position = j
-   #             self.objetos_list.append(material)
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -157,11 +170,15 @@ class MyGame(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
+        self.decoración_list.draw()
+        arcade.draw_text("PELIGRO!\nCOVID-19",670,111,arcade.color.DARK_CANDY_APPLE_RED,15, width=100, align="center",
+                         anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.virus_list.draw()
         self.pisos_list.draw()
         self.objetos_list.draw()
         self.wall_list.draw()
+
 
     def on_key_press(self, key, modifiers):  # se llama cada vez que presionamos una tecla
 
