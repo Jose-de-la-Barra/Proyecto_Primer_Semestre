@@ -4,8 +4,8 @@ import time
 import os
 
 
-SCREE_WIDHT = 1200
-SCREE_HEIGHT = 600
+SCREE_WIDHT = 1400
+SCREE_HEIGHT = 800
 SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
@@ -115,16 +115,16 @@ class MyGame(arcade.Window):
         sol = "sun1.png"
         self.decoracion_sprite = arcade.Sprite(sol, escala_sol)
         self.decoracion_sprite.center_x = 74
-        self.decoracion_sprite.center_y = 560
+        self.decoracion_sprite.center_y = 750
         self.decoracion_list.append(self.decoracion_sprite)
 
         letrero = "sign.png"
         self.decoracion_sprite = arcade.Sprite(letrero, 0.7)
-        self.decoracion_sprite.center_x = 670
+        self.decoracion_sprite.center_x = 1100
         self.decoracion_sprite.center_y = 108
         self.decoracion_list.append(self.decoracion_sprite)
 
-        piedra_x = [200, 690]
+        piedra_x = [350, 900]
         for k in range(len(piedra_x)):
             piedra = "rock.png"
             self.decoracion_sprite = arcade.Sprite(piedra, 0.3)
@@ -138,7 +138,7 @@ class MyGame(arcade.Window):
         # Puntuación
         self.score = 0  # Lleva un registro de la puntuación
 
-        for i in range(0, 1200, 150):
+        for i in range(800, 1500, 150):
             pasto = arcade.Sprite("grass.png", escala_sol)
             pasto.center_x = i
             pasto.center_y = 93
@@ -148,7 +148,7 @@ class MyGame(arcade.Window):
         personaje = "adventurer_swim1.png"
         self.player_sprite = arcade.Sprite(personaje, escala_personaje)
         self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 93
+        self.player_sprite.center_y = 400
         self.player_list.append(self.player_sprite)
 
         # CREAR VIRUS
@@ -158,20 +158,79 @@ class MyGame(arcade.Window):
         self.virus_list.append(virus)
 
         # crear piso con un loop de la imagen
-        for i in range(0, 1300, 64):
+        for i in range(320, 470, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
-            self.wall_list.append(piso)  # el piso no se puede atravesar
+            self.wall_list.append(piso)
+            #el ciclo de arriba y este de abajo es para el piso con pastito
+        for i in range(800, 1500, 64):
+            piso = arcade.Sprite("grassMid.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+            #ciclo para el agua
+        for i in range(510, 774, 64):
+            piso = arcade.Sprite("waterTop_high.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+
+#ciclo para la tierra superior con pasto
+        for i in range(0, 100, 64):
+            piso = arcade.Sprite("grassMid.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 224
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso) # el piso no se puede atravesar
+#los 3 siguietes ciclos son para la tieraa sin pasto
+        for p in range(0,256, 64):
+            piso = arcade.Sprite("grassCenter.png", escala_piso)
+            piso.center_x = p
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        for p in range(0,128, 64):
+            piso = arcade.Sprite("grassCenter.png", escala_piso)
+            piso.center_x = p
+            piso.center_y = 160
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        for p in range(0,192, 64):
+            piso = arcade.Sprite("grassCenter.png", escala_piso)
+            piso.center_x = p
+            piso.center_y = 96
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+#sprite que muestra como si estuviera en bajada
+        descenso = [[128,224],[192,160],[256,96]]
+        for p in range(len(descenso)):
+            piso = arcade.Sprite("grassHill_left.png", escala_piso)
+            piso.position = descenso[p]
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+#esquinas del piso
+        esquinas = [[128, 160],[192,96],[256,32]]
+        for p in range(len(esquinas)):
+            piso = arcade.Sprite("grassCorner_left.png", escala_piso)
+            piso.position = esquinas[p]
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+
 
         # asignar coordenadas fijas a el piso flotante
-        coordenas_pisoflotante = [[64, 320], [600, 200], [520, 430], [650, 430], [930, 430], [255, 200],
-                                  [945, 200], [400, 320], [780, 320], [1107, 310], [180, 460], [1107, 450]]
+        coordenas_pisoflotante = [[64, 520], [600, 400], [520, 630], [650, 630], [930, 630], [255, 400],
+                                  [945, 400], [400, 520], [780, 520], [1350, 570], [180, 660], [1107, 650],[400,230], [820,230],[1200,250],[1200,490]]
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
         cte_eje_y = 50
-        while n <= 9:
+        while n <= 13:
             coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante)
             coordenas_pisoflotante.remove(coordenas__choicepisoflotante)
 
@@ -185,6 +244,7 @@ class MyGame(arcade.Window):
                 n += 1
 
                 o = random.choice(cosas)
+
                 if o == "alcohol gel.png":
                     material = arcade.Sprite(o, escala_gel)
                     material.position = p[0], p[1]+cte_eje_y
@@ -216,7 +276,7 @@ class MyGame(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.decoracion_list.draw()
-        arcade.draw_text("PELIGRO!\nCOVID-19", 670, 111, arcade.color.DARK_CANDY_APPLE_RED, 15, width=100, align="center",
+        arcade.draw_text("PELIGRO!\nCOVID-19", 1100, 111, arcade.color.DARK_CANDY_APPLE_RED, 15, width=100, align="center",
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.virus_list.draw()
