@@ -4,8 +4,8 @@ import time
 import os
 
 
-SCREE_WIDHT = 1400
-SCREE_HEIGHT = 800
+SCREE_WIDHT = 1300
+SCREE_HEIGHT = 700
 SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
