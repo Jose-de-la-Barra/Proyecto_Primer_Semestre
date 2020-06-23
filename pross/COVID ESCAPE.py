@@ -5,7 +5,7 @@ import os
 
 
 SCREE_WIDHT = 1300
-SCREE_HEIGHT = 700
+SCREE_HEIGHT = 715
 SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
@@ -32,27 +32,6 @@ VIRUS_SPEED = 2
 # TOP_VIEWPORT_MARGIN = 0
 
 
-#class Ventana_Ganador(arcade.View):
-#    def __init__(self):
-#        super().__init__()
-#        self.texture = "ganador.png"
-
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
-#        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
-
-#    def on_draw(self):
-#        """ Draw this view """
-#        arcade.start_render()
-#        self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
-#                                SCREE_WIDHT, SCREE_HEIGHT)
-
-#    def on_mouse_press(self, _x, _y, _button, _modifiers):
-#        """ If the user presses the mouse button, re-start the game. """
-#        game_view = GameView()
-#        game_view.setup()
-#        self.window.show_view(game_view)
-
 
 class Virus(arcade.Sprite):
 
@@ -70,9 +49,9 @@ class Virus(arcade.Sprite):
             self.center_x -= min(VIRUS_SPEED, self.center_x - player_sprite.center_x)
 
 
-class MyGame(arcade.Window):
+class MyGame(arcade.View):
     def __init__(self):
-        super().__init__(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
+        super().__init__()
         arcade.set_background_color(arcade.color.ALICE_BLUE)
 
         file_path = os.path.dirname(os.path.abspath(__file__))
@@ -306,7 +285,7 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):  # Actualización
         self.physics_engine.update()
-
+        virus_hit = arcade.check_for_collision_with_list(self.player_sprite,self.virus_list )
         # Mira si golpeamos algun objeto
         objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.objetos_list)
         # Recorre cada objeto que golpeamos (si hay alguno) y lo retira el objeto de  para monedas en objetos_hit_list:
@@ -320,6 +299,60 @@ class MyGame(arcade.Window):
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
 
+        if (self.score < 2) and virus_hit:
+            view = GameOverView()
+            self.window.show_view(view)
+        elif self.score == 2:
+            view = Ventana_Ganador()
+            self.window.show_view(view)
+
+class GameOverView(arcade.View):
+    """ View to show when game is over """
+
+    def __init__(self):
+        """ This is run once when we switch to this view """
+        super().__init__()
+        self.texture = arcade.load_texture("Restart.png")
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
+                                SCREE_WIDHT, SCREE_HEIGHT)
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, re-start the game. """
+        game_view = MyGame()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+class Ventana_Ganador(arcade.View):
+    """ View to show when game is over """
+
+    def __init__(self):
+        """ This is run once when we switch to this view """
+        super().__init__()
+        self.texture = arcade.load_texture("ganador.jpg")
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Draw this view """
+        arcade.start_render()
+        self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
+                                SCREE_WIDHT, SCREE_HEIGHT)
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ If the user presses the mouse button, re-start the game. """
+        game_view = MyGame()
+        game_view.setup()
+        self.window.show_view(game_view)
 
 #        if self.score == 9:
 #            view = Ventana_Ganador()
@@ -366,8 +399,10 @@ class MyGame(arcade.Window):
                                 #self.view_bottom,
                                 #SCREE_HEIGHT + self.view_bottom)
 def main():
-    window = MyGame()
-    window.setup()
+    window = arcade.Window(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
+    start_view = MyGame()
+    window.show_view(start_view)
+    start_view.setup()
     arcade.run()
 
 
