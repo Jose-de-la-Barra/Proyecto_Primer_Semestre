@@ -3,13 +3,16 @@ import random
 import time
 import os
 
-
 SCREE_WIDHT = 1300
 SCREE_HEIGHT = 700
 SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
+
 escala_personaje = 0.8
+
+escala_personaje = 0.7
+
 escala_virus = 0.12
 escala_piso = 0.5
 escala_pisovolador = 0.43
@@ -19,10 +22,11 @@ escala_gel = 0.07
 escala_sol = 0.5
 
 # características de la fisica del juego
-JUMP_SPEED = 15
+JUMP_SPEED = 13
 GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
+
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
@@ -30,7 +34,6 @@ VIRUS_SPEED = 2
 # RIGHT_VIEWPORT_MARGIN = 0
 # BOTTOM_VIEWPORT_MARGIN = 0
 # TOP_VIEWPORT_MARGIN = 0
-
 
 
 class Virus(arcade.Sprite):
@@ -88,7 +91,7 @@ class MyGame(arcade.View):
         self.objetos_list = arcade.SpriteList()
         self.decoracion_list = arcade.SpriteList()
 
-#        self.player_list.append(self.player_sprite)
+        #        self.player_list.append(self.player_sprite)
         self.wall_list = arcade.SpriteList()
         # AMBIENTE
         sol = "sun1.png"
@@ -143,70 +146,72 @@ class MyGame(arcade.View):
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
-            #el ciclo de arriba y este de abajo es para el piso con pastito
-        for i in range(800, 1500, 64):
+            # el ciclo de arriba y este de abajo es para el piso con pastito
+        for i in range(736, 1500, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-            #ciclo para el agua
-        for i in range(510, 774, 64):
+            # ciclo para el agua
+        for i in range(510, 710, 64):
             piso = arcade.Sprite("waterTop_high.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
 
-#ciclo para la tierra superior con pasto
+        # ciclo para la tierra superior con pasto
         for i in range(0, 100, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 224
             self.pisos_list.append(piso)
-            self.wall_list.append(piso) # el piso no se puede atravesar
-#los 3 siguietes ciclos son para la tieraa sin pasto
-        for p in range(0,256, 64):
+            self.wall_list.append(piso)  # el piso no se puede atravesar
+        # los 3 siguietes ciclos son para la tieraa sin pasto
+        for p in range(0, 256, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for p in range(0,128, 64):
+        for p in range(0, 128, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 160
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for p in range(0,192, 64):
+        for p in range(0, 192, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 96
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
-#sprite que muestra como si estuviera en bajada
-        descenso = [[128,224],[192,160],[256,96]]
+        # sprite que muestra como si estuviera en bajada
+        descenso = [[128, 224], [192, 160], [256, 96]]
         for p in range(len(descenso)):
             piso = arcade.Sprite("grassHill_left.png", escala_piso)
             piso.position = descenso[p]
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
-#esquinas del piso
-        esquinas = [[128, 160],[192,96],[256,32]]
+        # esquinas del piso
+        esquinas = [[128, 160], [192, 96], [256, 32]]
         for p in range(len(esquinas)):
             piso = arcade.Sprite("grassCorner_left.png", escala_piso)
             piso.position = esquinas[p]
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-
-
         # asignar coordenadas fijas a el piso flotante
+
 
         coordenas_pisoflotante = [[40,460], [210, 550],[600, 390],[730,550],[185,360] ,[330, 440],[1020, 330], [480, 550], [840, 430],[400,230], [820,230],[1200,250],[1250,550],[1140,435],[1000,550]]
         coordenas_para_los_objetos = []
+
+
+
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
         cte_eje_y = 50
@@ -221,8 +226,11 @@ class MyGame(arcade.View):
                 pisoaire = arcade.Sprite("ground_grass_small_broken.png", escala_pisovolador)
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
-                self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
+                self.wall_list.append(pisoaire) # el piso flotante no se puede atravesar
+                print(coordenas__choicepisoflotante)
                 n += 1
+
+
 
 
 
@@ -243,13 +251,30 @@ class MyGame(arcade.View):
                 material = arcade.Sprite(o, escala_mask)
                 material.position = k[0], k[1]+cte_eje_y
                 self.objetos_list.append(material)
+            print(k)
 
-       # coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
-        #for p in coordenas_pisoflotante:
-         #   pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
-          #  pisoaire.position = p
-           # self.pisos_list.append(pisoaire)
-            #self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
+                #o = random.choice(cosas)
+
+              #  if o == "alcohol gel.png" and n < 10:
+               #     material = arcade.Sprite(o, escala_gel)
+                #    material.position = p[0], p[1] + cte_eje_y
+                 #   self.objetos_list.append(material)
+               # elif o == "guantes.png" and n < 10:
+                #    material = arcade.Sprite(o, escala_guantes)
+                 #   material.position = p[0], p[1] + cte_eje_y
+                  #  self.objetos_list.append(material)
+                #elif o == "mascara.png" and n < 10:
+                 #   material = arcade.Sprite(o, escala_mask)
+                  #  material.position = p[0], p[1] + cte_eje_y
+                   # self.objetos_list.append(material)
+
+
+        # coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
+        # for p in coordenas_pisoflotante:
+        #   pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
+        #  pisoaire.position = p
+        # self.pisos_list.append(pisoaire)
+        # self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -262,7 +287,8 @@ class MyGame(arcade.View):
     def on_draw(self):
         arcade.start_render()
         self.decoracion_list.draw()
-        arcade.draw_text("PELIGRO!\nCOVID-19", 1100, 111, arcade.color.DARK_CANDY_APPLE_RED, 15, width=100, align="center",
+        arcade.draw_text("PELIGRO!\nCOVID-19", 1100, 111, arcade.color.DARK_CANDY_APPLE_RED, 15, width=100,
+                         align="center",
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.virus_list.draw()
@@ -292,7 +318,7 @@ class MyGame(arcade.View):
 
     def on_update(self, delta_time):  # Actualización
         self.physics_engine.update()
-        virus_hit = arcade.check_for_collision_with_list(self.player_sprite,self.virus_list )
+        virus_hit = arcade.check_for_collision_with_list(self.player_sprite, self.virus_list)
         # Mira si golpeamos algun objeto
         objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.objetos_list)
         # Recorre cada objeto que golpeamos (si hay alguno) y lo retira el objeto de  para monedas en objetos_hit_list:
@@ -312,6 +338,7 @@ class MyGame(arcade.View):
         elif self.score == 8:
             view = Ventana_Ganador()
             self.window.show_view(view)
+
 
 class GameOverView(arcade.View):
     """ View to show when game is over """
@@ -337,6 +364,7 @@ class GameOverView(arcade.View):
         game_view.setup()
         self.window.show_view(game_view)
 
+
 class Ventana_Ganador(arcade.View):
     """ View to show when game is over """
 
@@ -361,50 +389,53 @@ class Ventana_Ganador(arcade.View):
         game_view.setup()
         self.window.show_view(game_view)
 
+
 #        if self.score == 9:
 #            view = Ventana_Ganador()
 #            self.window.show_view(view)
 
-        # --- Administrar desplazamiento ---
+# --- Administrar desplazamiento ---
 
-        # Rastrear si necesitamos cambiar la ventana gráfica
-        #changed = False
+# Rastrear si necesitamos cambiar la ventana gráfica
+# changed = False
 
-        # Desplazarse a la izquierda
-        #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-        #if self.player_sprite.left < left_boundary:
-            #self.view_left -= left_boundary - self.player_sprite.left
-            #changed = True
+# Desplazarse a la izquierda
+# left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+# if self.player_sprite.left < left_boundary:
+# self.view_left -= left_boundary - self.player_sprite.left
+# changed = True
 
-        # Desplazarse a la derecha
-        #right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
-        #if self.player_sprite.right > right_boundary:
-            #self.view_left += self.player_sprite.right - right_boundary
-            #changed = True
+# Desplazarse a la derecha
+# right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+# if self.player_sprite.right > right_boundary:
+# self.view_left += self.player_sprite.right - right_boundary
+# changed = True
 
-        # Desplazarse hacia arriba
-        #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-        #if self.player_sprite.top > top_boundary:
-            #self.view_bottom += self.player_sprite.top - top_boundary
-            #changed = True
+# Desplazarse hacia arriba
+# top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+# if self.player_sprite.top > top_boundary:
+# self.view_bottom += self.player_sprite.top - top_boundary
+# changed = True
 
-        # Desplazarse hacia abajo
-        #bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-        #if self.player_sprite.bottom < bottom_boundary:
-            #self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-            #changed = True
+# Desplazarse hacia abajo
+# bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+# if self.player_sprite.bottom < bottom_boundary:
+# self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+# changed = True
 
-        #if changed:
-            # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
-            # no se alineen en la pantalla
-            #self.view_bottom = int(self.view_bottom)
-            #self.view_left = int(self.view_left)
+# if changed:
+# Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
+# no se alineen en la pantalla
+# self.view_bottom = int(self.view_bottom)
+# self.view_left = int(self.view_left)
 
-           # Do the scrolling
-            #arcade.set_viewport(self.view_left,
-                                #SCREE_WIDHT + self.view_left,
-                                #self.view_bottom,
-                                #SCREE_HEIGHT + self.view_bottom)
+# Do the scrolling
+# arcade.set_viewport(self.view_left,
+# SCREE_WIDHT + self.view_left,
+# self.view_bottom,
+# SCREE_HEIGHT + self.view_bottom)
+
+
 def main():
     window = arcade.Window(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
     start_view = MyGame()
@@ -415,3 +446,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
