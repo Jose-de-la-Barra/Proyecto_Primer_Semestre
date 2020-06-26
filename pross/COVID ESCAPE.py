@@ -30,10 +30,10 @@ VIRUS_SPEED = 2
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
-# LEFT_VIEWPORT_MARGIN = 0
-# RIGHT_VIEWPORT_MARGIN = 0
-# BOTTOM_VIEWPORT_MARGIN = 0
-# TOP_VIEWPORT_MARGIN = 0
+#LEFT_VIEWPORT_MARGIN = 0
+#RIGHT_VIEWPORT_MARGIN = 0
+#BOTTOM_VIEWPORT_MARGIN = 0
+#TOP_VIEWPORT_MARGIN = 0
 
 
 class Virus(arcade.Sprite):
@@ -160,6 +160,12 @@ class MyGame(arcade.View):
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
+        for k in range(0,800,64):
+            pared = arcade.Sprite("grassCenter.png", escala_piso)
+            pared.center_x = -34
+            pared.center_y = k
+            self.wall_list.append(pared)
+
 
         # ciclo para la tierra superior con pasto
         for i in range(0, 100, 64):
@@ -310,9 +316,7 @@ class MyGame(arcade.View):
             self.score += 1  # Agrega uno al puntaje
 
 
-
-
-
+        #if self.score > 2:
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
 
@@ -327,14 +331,7 @@ class MyGame(arcade.View):
         if (self.score < 10) and virus_hit:
             view = GameOverView()
             self.window.show_view(view)
-        #elif self.score == 8:
 
-            #cordenada_vacuna = [[40, 460], [210, 550], [600, 390]]
-            #k = random.choice(cordenada_vacuna)
-            #vacuna = arcade.Sprite("VACUNA.png", 0.1)
-            #vacuna.position = k[0], k[1]+50
-            #self.objetos_list.append(vacuna)
-                
         elif self.score == 10 and virus_hit:
             view = Ventana_Ganador()
             self.window.show_view(view)
@@ -398,43 +395,44 @@ class Ventana_Ganador(arcade.View):
 # --- Administrar desplazamiento ---
 
 # Rastrear si necesitamos cambiar la ventana gráfica
-# changed = False
+#changed = False
 
-# Desplazarse a la izquierda
-# left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-# if self.player_sprite.left < left_boundary:
-# self.view_left -= left_boundary - self.player_sprite.left
-# changed = True
+#Desplazarse a la izquierda
+#left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+#if self.player_sprite.left < left_boundary:
+#self.view_left -= left_boundary - self.player_sprite.left
+#changed = True
 
 # Desplazarse a la derecha
-# right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
-# if self.player_sprite.right > right_boundary:
-# self.view_left += self.player_sprite.right - right_boundary
-# changed = True
+#right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+#if self.player_sprite.right > right_boundary:
+ #   self.view_left += self.player_sprite.right - right_boundary
+   # changed = True
 
 # Desplazarse hacia arriba
-# top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-# if self.player_sprite.top > top_boundary:
-# self.view_bottom += self.player_sprite.top - top_boundary
-# changed = True
+#top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+#if self.player_sprite.top > top_boundary:
+#self.view_bottom += self.player_sprite.top - top_boundary
+
+#changed = True
 
 # Desplazarse hacia abajo
-# bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-# if self.player_sprite.bottom < bottom_boundary:
-# self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-# changed = True
+#bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+#if self.player_sprite.bottom < bottom_boundary:
+#self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+#changed = True
 
-# if changed:
+#if changed:
 # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
 # no se alineen en la pantalla
-# self.view_bottom = int(self.view_bottom)
-# self.view_left = int(self.view_left)
+#self.view_bottom = int(self.view_bottom)
+#self.view_left = int(self.view_left)
 
-# Do the scrolling
-# arcade.set_viewport(self.view_left,
-# SCREE_WIDHT + self.view_left,
-# self.view_bottom,
-# SCREE_HEIGHT + self.view_bottom)
+#Do the scrolling
+#arcade.set_viewport(self.view_left,
+#SCREE_WIDHT + self.view_left,
+#self.view_bottom,
+#SCREE_HEIGHT + self.view_bottom)
 
 
 def main():
