@@ -9,9 +9,9 @@ SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
 
-escala_personaje = 0.8
-
 escala_personaje = 0.7
+
+
 
 escala_virus = 0.12
 escala_piso = 0.5
@@ -22,7 +22,7 @@ escala_gel = 0.07
 escala_sol = 0.5
 
 # características de la fisica del juego
-JUMP_SPEED = 13
+JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
@@ -227,7 +227,7 @@ class MyGame(arcade.View):
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
                 self.wall_list.append(pisoaire) # el piso flotante no se puede atravesar
-                print(coordenas__choicepisoflotante)
+
                 n += 1
 
 
@@ -251,30 +251,8 @@ class MyGame(arcade.View):
                 material = arcade.Sprite(o, escala_mask)
                 material.position = k[0], k[1]+cte_eje_y
                 self.objetos_list.append(material)
-            print(k)
-
-                #o = random.choice(cosas)
-
-              #  if o == "alcohol gel.png" and n < 10:
-               #     material = arcade.Sprite(o, escala_gel)
-                #    material.position = p[0], p[1] + cte_eje_y
-                 #   self.objetos_list.append(material)
-               # elif o == "guantes.png" and n < 10:
-                #    material = arcade.Sprite(o, escala_guantes)
-                 #   material.position = p[0], p[1] + cte_eje_y
-                  #  self.objetos_list.append(material)
-                #elif o == "mascara.png" and n < 10:
-                 #   material = arcade.Sprite(o, escala_mask)
-                  #  material.position = p[0], p[1] + cte_eje_y
-                   # self.objetos_list.append(material)
 
 
-        # coordenas_pisoflotante = [[600, 430], [255, 200], [945, 200], [420, 320], [780, 320], [180, 460], [1107, 450]]
-        # for p in coordenas_pisoflotante:
-        #   pisoaire = arcade.Sprite("Piso flotante.png", escala_pisovolador)
-        #  pisoaire.position = p
-        # self.pisos_list.append(pisoaire)
-        # self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -291,10 +269,10 @@ class MyGame(arcade.View):
                          align="center",
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
-        self.virus_list.draw()
         self.pisos_list.draw()
         self.objetos_list.draw()
         self.wall_list.draw()
+        self.virus_list.draw()
 
         # Dibuja nuestro puntaje en la pantalla, desplazándolo con la ventana gráfica
         score_text = f"Score: {self.score}"
@@ -317,8 +295,10 @@ class MyGame(arcade.View):
             self.player_sprite.change_x = 0
 
     def on_update(self, delta_time):  # Actualización
+
         self.physics_engine.update()
         virus_hit = arcade.check_for_collision_with_list(self.player_sprite, self.virus_list)
+
         # Mira si golpeamos algun objeto
         objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.objetos_list)
         # Recorre cada objeto que golpeamos (si hay alguno) y lo retira el objeto de  para monedas en objetos_hit_list:
@@ -329,15 +309,36 @@ class MyGame(arcade.View):
             arcade.play_sound(self.collect_objetos_sound)
             self.score += 1  # Agrega uno al puntaje
 
+
+
+
+
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
 
-        if (self.score < 8) and virus_hit:
+        if self.score == 8:
+            cordenada_vacuna = [[40,460], [210, 550],[600, 390],[730,550],[185,360] ,[330, 440],[1020, 330], [480, 550], [840, 430],[400,230], [820,230],[1200,250],[1250,550],[1140,435],[1000,550]]
+            k = random.choice(cordenada_vacuna)
+            vacuna = arcade.Sprite("VACUNA.png", 0.1)
+            vacuna.position = k[0] , k[1] + 50
+            self.objetos_list.append(vacuna)
+            self.score = 9
+
+        if (self.score < 10) and virus_hit:
             view = GameOverView()
             self.window.show_view(view)
-        elif self.score == 8:
+        #elif self.score == 8:
+
+            #cordenada_vacuna = [[40, 460], [210, 550], [600, 390]]
+            #k = random.choice(cordenada_vacuna)
+            #vacuna = arcade.Sprite("VACUNA.png", 0.1)
+            #vacuna.position = k[0], k[1]+50
+            #self.objetos_list.append(vacuna)
+                
+        elif self.score == 10 and virus_hit:
             view = Ventana_Ganador()
             self.window.show_view(view)
+
 
 
 class GameOverView(arcade.View):
