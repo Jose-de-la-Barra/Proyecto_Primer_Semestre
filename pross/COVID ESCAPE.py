@@ -11,8 +11,6 @@ SCREE_TITLE = "COVID ESCAPE"
 
 escala_personaje = 0.7
 
-
-
 escala_virus = 0.12
 escala_piso = 0.5
 escala_pisovolador = 0.43
@@ -30,10 +28,10 @@ VIRUS_SPEED = 2
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
-#LEFT_VIEWPORT_MARGIN = 0
-#RIGHT_VIEWPORT_MARGIN = 0
-#BOTTOM_VIEWPORT_MARGIN = 0
-#TOP_VIEWPORT_MARGIN = 0
+# LEFT_VIEWPORT_MARGIN = 0
+# RIGHT_VIEWPORT_MARGIN = 0
+# BOTTOM_VIEWPORT_MARGIN = 0
+# TOP_VIEWPORT_MARGIN = 0
 
 
 class Virus(arcade.Sprite):
@@ -63,6 +61,7 @@ class MyGame(arcade.View):
         self.player_list = None  # LISTA QUE CONTIENE PERSONAJE
         self.virus_list = None  # ...
         self.pisos_list = None
+        self.agua_list = None
         self.objetos_list = None
         self.decoracion_list = None
 
@@ -88,6 +87,7 @@ class MyGame(arcade.View):
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
         self.virus_list = arcade.SpriteList()
         self.pisos_list = arcade.SpriteList()
+        self.agua_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
         self.decoracion_list = arcade.SpriteList()
 
@@ -159,13 +159,12 @@ class MyGame(arcade.View):
             piso = arcade.Sprite("waterTop_high.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
-            self.pisos_list.append(piso)
-        for k in range(0,800,64):
+            self.agua_list.append(piso)
+        for k in range(0, 800, 64):
             pared = arcade.Sprite("grassCenter.png", escala_piso)
             pared.center_x = -34
             pared.center_y = k
             self.wall_list.append(pared)
-
 
         # ciclo para la tierra superior con pasto
         for i in range(0, 100, 64):
@@ -211,13 +210,10 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # asignar coordenadas fijas a el piso flotante
-
-
-        coordenas_pisoflotante = [[40,460], [210, 550],[600, 390],[730,550],[185,360] ,[330, 440],[1020, 330], [480, 550], [840, 430],[400,230], [820,230],[1200,250],[1250,550],[1140,435],[1000,550]]
+        coordenas_pisoflotante = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
+                                  [480, 550], [840, 430], [400, 230], [820, 230], [1200, 250], [1250, 550], [1140, 435],
+                                  [1000, 550]]
         coordenas_para_los_objetos = []
-
-
-
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
         cte_eje_y = 50
@@ -232,13 +228,9 @@ class MyGame(arcade.View):
                 pisoaire = arcade.Sprite("ground_grass_small_broken.png", escala_pisovolador)
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
-                self.wall_list.append(pisoaire) # el piso flotante no se puede atravesar
+                self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
 
                 n += 1
-
-
-
-
 
         for i in range(8):
             k = random.choice(coordenas_para_los_objetos)
@@ -247,18 +239,16 @@ class MyGame(arcade.View):
 
             if o == "alcohol gel.png":
                 material = arcade.Sprite(o, escala_gel)
-                material.position = k[0], k[1]+cte_eje_y
+                material.position = k[0], k[1] + cte_eje_y
                 self.objetos_list.append(material)
             elif o == "guantes.png":
                 material = arcade.Sprite(o, escala_guantes)
-                material.position = k[0], k[1]+cte_eje_y
+                material.position = k[0], k[1] + cte_eje_y
                 self.objetos_list.append(material)
             elif o == "mascara.png":
                 material = arcade.Sprite(o, escala_mask)
-                material.position = k[0], k[1]+cte_eje_y
+                material.position = k[0], k[1] + cte_eje_y
                 self.objetos_list.append(material)
-
-
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -276,6 +266,7 @@ class MyGame(arcade.View):
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.pisos_list.draw()
+        self.agua_list.draw()
         self.objetos_list.draw()
         self.wall_list.draw()
         self.virus_list.draw()
@@ -315,16 +306,17 @@ class MyGame(arcade.View):
             arcade.play_sound(self.collect_objetos_sound)
             self.score += 1  # Agrega uno al puntaje
 
-
-        #if self.score > 2:
+        # if self.score > 2:
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
 
         if self.score == 8:
-            cordenada_vacuna = [[40,460], [210, 550],[600, 390],[730,550],[185,360] ,[330, 440],[1020, 330], [480, 550], [840, 430],[400,230], [820,230],[1200,250],[1250,550],[1140,435],[1000,550]]
+            cordenada_vacuna = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
+                                [480, 550], [840, 430], [400, 230], [820, 230], [1200, 250], [1250, 550], [1140, 435],
+                                [1000, 550]]
             k = random.choice(cordenada_vacuna)
             vacuna = arcade.Sprite("VACUNA.png", 0.1)
-            vacuna.position = k[0] , k[1] + 50
+            vacuna.position = k[0], k[1] + 50
             self.objetos_list.append(vacuna)
             self.score = 9
 
@@ -336,6 +328,12 @@ class MyGame(arcade.View):
             view = Ventana_Ganador()
             self.window.show_view(view)
 
+        # Para que pierda cuando toque el agua
+        agua_hit = arcade.check_for_collision_with_list(self.player_sprite, self.agua_list)
+        if agua_hit:
+            time.sleep(.3)
+            view = GameOverView()
+            self.window.show_view(view)
 
 
 class GameOverView(arcade.View):
@@ -395,44 +393,44 @@ class Ventana_Ganador(arcade.View):
 # --- Administrar desplazamiento ---
 
 # Rastrear si necesitamos cambiar la ventana gráfica
-#changed = False
+# changed = False
 
-#Desplazarse a la izquierda
-#left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-#if self.player_sprite.left < left_boundary:
-#self.view_left -= left_boundary - self.player_sprite.left
-#changed = True
+# Desplazarse a la izquierda
+# left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+# if self.player_sprite.left < left_boundary:
+# self.view_left -= left_boundary - self.player_sprite.left
+# changed = True
 
 # Desplazarse a la derecha
-#right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
-#if self.player_sprite.right > right_boundary:
- #   self.view_left += self.player_sprite.right - right_boundary
-   # changed = True
+# right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+# if self.player_sprite.right > right_boundary:
+#   self.view_left += self.player_sprite.right - right_boundary
+# changed = True
 
 # Desplazarse hacia arriba
-#top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-#if self.player_sprite.top > top_boundary:
-#self.view_bottom += self.player_sprite.top - top_boundary
+# top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+# if self.player_sprite.top > top_boundary:
+# self.view_bottom += self.player_sprite.top - top_boundary
 
-#changed = True
+# changed = True
 
 # Desplazarse hacia abajo
-#bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-#if self.player_sprite.bottom < bottom_boundary:
-#self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-#changed = True
+# bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+# if self.player_sprite.bottom < bottom_boundary:
+# self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+# changed = True
 
-#if changed:
+# if changed:
 # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
 # no se alineen en la pantalla
-#self.view_bottom = int(self.view_bottom)
-#self.view_left = int(self.view_left)
+# self.view_bottom = int(self.view_bottom)
+# self.view_left = int(self.view_left)
 
-#Do the scrolling
-#arcade.set_viewport(self.view_left,
-#SCREE_WIDHT + self.view_left,
-#self.view_bottom,
-#SCREE_HEIGHT + self.view_bottom)
+# Do the scrolling
+# arcade.set_viewport(self.view_left,
+# SCREE_WIDHT + self.view_left,
+# self.view_bottom,
+# SCREE_HEIGHT + self.view_bottom)
 
 
 def main():
