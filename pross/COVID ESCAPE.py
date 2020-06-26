@@ -25,6 +25,8 @@ GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
 
+arcade.play_sound(arcade.load_sound("cancion.mp3"))
+
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
@@ -32,7 +34,6 @@ VIRUS_SPEED = 2
 # RIGHT_VIEWPORT_MARGIN = 0
 # BOTTOM_VIEWPORT_MARGIN = 0
 # TOP_VIEWPORT_MARGIN = 0
-
 
 class Virus(arcade.Sprite):
 
@@ -443,4 +444,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
