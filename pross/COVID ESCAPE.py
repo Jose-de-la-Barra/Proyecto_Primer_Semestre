@@ -2,6 +2,8 @@ import arcade
 import random
 import time
 import os
+from pathlib import Path
+from typing import Union
 
 SCREE_WIDHT = 1300
 SCREE_HEIGHT = 700
@@ -36,6 +38,8 @@ RIGHT_VIEWPORT_MARGIN = 250
 BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
 
+MUSIC_VOLUME = 0.1
+
 
 class Virus(arcade.Sprite):
 
@@ -68,7 +72,6 @@ class MyGame(arcade.View):
         self.agua_lava_list = None
         self.objetos_list = None
         self.decoracion_list = None
-        self.muralla_list = None
 
         self.player_sprite = None  # VARIABLE DEL SPRITE
         self.virus_sprite = None  # VARIABLE DEL SPRITE
@@ -83,6 +86,10 @@ class MyGame(arcade.View):
 
         self.collect_objetos_sound = arcade.load_sound("Recoger.mp3")  # Sonido cuando toma cosas el personaje
         self.jump_sound = arcade.load_sound("salto.mp3")  # Efecto de sonido cuando salta el personaje
+
+        self.music = None
+        self.current_song = 0
+        self.music_list = []
 
         # Se utiliza para realizar un seguimiento de nuestro desplazamiento
         self.view_bottom = 0
@@ -100,7 +107,6 @@ class MyGame(arcade.View):
         self.decoracion_list = arcade.SpriteList()
         self.player_sprite = arcade.AnimatedWalkingSprite()
         self.muralla_list = arcade.SpriteList()
-
 
 
 #con lo siguiente creamos el personaje y le damos movimiento animado(100-118)
@@ -379,9 +385,28 @@ class MyGame(arcade.View):
                 material.position = k[0], k[1] + cte_eje_y
                 self.objetos_list.append(material)
 
-
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
+
+        # musica
+        self.music_list = ["cancion.mp3"]
+        self.current_song = 0
+        # Play the song
+        self.play_song()
+
+    def play_song(self):
+        """ Play the song. """
+        # Stop what is currently playing.
+        if self.music:
+            self.music.stop()
+
+        # Play the next song
+        self.music = arcade.Sound(self.music_list[self.current_song], streaming=True)
+        self.music.play(MUSIC_VOLUME)
+        # This is a quick delay. If we don't do this, our elapsed time is 0.0
+        # and on_update will think the music is over and advance us to the next
+        # song before starting this one.
+        time.sleep(0.03)
 
     def gravedad(self):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
@@ -452,7 +477,6 @@ class MyGame(arcade.View):
                 i.remove_from_sprite_lists()
             for k in self.muralla_list:
                 k.remove_from_sprite_lists()
-
 
         if self.score == 8:
             cordenada_vacuna = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
@@ -538,6 +562,7 @@ class MyGame(arcade.View):
                             self.view_bottom,
                             SCREE_HEIGHT + self.view_bottom)
 
+
 class GameOverView(arcade.View):
     """ View to show when game is over """
 
@@ -585,6 +610,7 @@ class Ventana_Ganador(arcade.View):
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
+
 
 
 #        if self.score == 9:
@@ -641,7 +667,6 @@ def main():
     window.show_view(start_view)
     start_view.setup()
     arcade.run()
-
 
 if __name__ == "__main__":
     main()
