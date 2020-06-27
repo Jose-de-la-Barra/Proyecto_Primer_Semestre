@@ -25,7 +25,7 @@ GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
 
-arcade.play_sound(arcade.load_sound("cancion.mp3"))
+#arcade.play_sound(arcade.load_sound("cancion.mp3"))
 
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
@@ -34,6 +34,7 @@ LEFT_VIEWPORT_MARGIN = 0
 RIGHT_VIEWPORT_MARGIN = 0
 BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
+
 
 class Virus(arcade.Sprite):
 
@@ -91,6 +92,30 @@ class MyGame(arcade.View):
         self.agua_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
         self.decoracion_list = arcade.SpriteList()
+        self.player_sprite = arcade.AnimatedWalkingSprite()
+
+
+#con lo siguiente creamos el personaje y le damos movimiento animado(100-118)
+        self.player_sprite.stand_right_textures = []
+        self.player_sprite.stand_right_textures.append(arcade.load_texture("adventurer_stand.png"))
+
+        self.player_sprite.stand_left_textures = []
+        self.player_sprite.stand_left_textures.append(arcade.load_texture("adventurer_stand.png", mirrored=True))
+
+        self.player_sprite.walk_right_textures = []
+        self.player_sprite.walk_right_textures.append(arcade.load_texture("adventurer_walk1.png"))
+        self.player_sprite.walk_right_textures.append(arcade.load_texture("adventurer_walk2.png"))
+
+        self.player_sprite.walk_left_textures = []
+        self.player_sprite.walk_left_textures.append(arcade.load_texture("adventurer_walk1.png", mirrored=True))
+        self.player_sprite.walk_left_textures.append(arcade.load_texture("adventurer_walk2.png", mirrored=True))
+
+
+
+        self.player_sprite.scale = escala_personaje
+        self.player_sprite.center_x = 64
+        self.player_sprite.center_y = 400
+        self.player_list.append(self.player_sprite)
 
         #        self.player_list.append(self.player_sprite)
         self.wall_list = arcade.SpriteList()
@@ -127,11 +152,11 @@ class MyGame(arcade.View):
             pasto.center_y = 937
 
         # Crear personaje
-        personaje = "adventurer_swim1.png"
-        self.player_sprite = arcade.Sprite(personaje, escala_personaje)
-        self.player_sprite.center_x = 64
-        self.player_sprite.center_y = 400
-        self.player_list.append(self.player_sprite)
+        #personaje = "adventurer_swim1.png"
+        #self.player_sprite = arcade.Sprite(personaje, escala_personaje)
+        #self.player_sprite.center_x = 64
+        #self.player_sprite.center_y = 400
+        #self.player_list.append(self.player_sprite)
 
         # CREAR VIRUS
         virus = Virus("virus.png", escala_virus)  # hereda las características de la clase Virus
@@ -293,6 +318,7 @@ class MyGame(arcade.View):
 
     def on_update(self, delta_time):  # Actualización
 
+        self.player_list.update_animation()
         self.physics_engine.update()
         virus_hit = arcade.check_for_collision_with_list(self.player_sprite, self.virus_list)
 
@@ -471,6 +497,8 @@ class Ventana_Ganador(arcade.View):
 # SCREE_WIDHT + self.view_left,
 # self.view_bottom,
 # SCREE_HEIGHT + self.view_bottom)
+
+
 
 
 def main():
