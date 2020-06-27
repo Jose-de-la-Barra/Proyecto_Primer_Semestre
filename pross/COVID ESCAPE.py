@@ -25,13 +25,13 @@ GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
 
-#arcade.play_sound(arcade.load_sound("cancion.mp3"))
+# arcade.play_sound(arcade.load_sound("cancion.mp3"))
 
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
-LEFT_VIEWPORT_MARGIN = 0
-RIGHT_VIEWPORT_MARGIN = 0
+LEFT_VIEWPORT_MARGIN = 200
+RIGHT_VIEWPORT_MARGIN = 250
 BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
 
@@ -110,8 +110,6 @@ class MyGame(arcade.View):
         self.player_sprite.walk_left_textures.append(arcade.load_texture("adventurer_walk1.png", mirrored=True))
         self.player_sprite.walk_left_textures.append(arcade.load_texture("adventurer_walk2.png", mirrored=True))
 
-
-
         self.player_sprite.scale = escala_personaje
         self.player_sprite.center_x = 64
         self.player_sprite.center_y = 400
@@ -172,7 +170,7 @@ class MyGame(arcade.View):
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
             # el ciclo de arriba y este de abajo es para el piso con pastito
-        for i in range(736, 1500, 64):
+        for i in range(736, 1350, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
@@ -185,11 +183,17 @@ class MyGame(arcade.View):
             piso.center_x = i
             piso.center_y = 32
             self.agua_list.append(piso)
-        for k in range(0, 800, 64):
-            pared = arcade.Sprite("grassCenter.png", escala_piso)
-            pared.center_x = -34
-            pared.center_y = k
-            self.wall_list.append(pared)
+        # tope del mapa por la izquierda
+
+        n = 0
+        while n <= 192:
+            for k in range(0, 800, 64):
+                pared = arcade.Sprite("grassCenter.png", escala_piso)
+                pared.center_x = -64 - n
+                pared.center_y = k
+                self.wall_list.append(pared)
+            n += 64
+
 
         # ciclo para la tierra superior con pasto
         for i in range(0, 100, 64):
@@ -274,6 +278,84 @@ class MyGame(arcade.View):
                 material = arcade.Sprite(o, escala_mask)
                 material.position = k[0], k[1] + cte_eje_y
                 self.objetos_list.append(material)
+
+        # carteles de flecha
+        cont = 0
+        for i in range(2):
+            letrero_flecha = "signRight.png"
+            self.decoracion_sprite = arcade.Sprite(letrero_flecha, 0.5)
+            self.decoracion_sprite.center_x = 400 + cont
+            self.decoracion_sprite.center_y = 95
+            self.decoracion_list.append(self.decoracion_sprite)
+            cont = 850
+
+        # SEGUNDA PIEZA
+
+        # piso
+        for i in range(1350, 1600, 64):
+            piso = arcade.Sprite("planetMid.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        for i in range(1798, 3000, 64):
+            piso = arcade.Sprite("planetMid.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        # lava
+        for i in range(1606, 1780, 64):
+            piso = arcade.Sprite("lavaTop_high.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        # plataformas
+        agr_x = 1350
+        coordenas_pisoflotante = [[40 + agr_x, 460], [210 + agr_x, 550], [600 + agr_x, 390], [730 + agr_x, 550], [185 + agr_x, 360], [330 + agr_x, 440], [1020 + agr_x, 330],
+                                  [480 + agr_x, 550], [840 + agr_x, 430], [400 + agr_x, 230], [820 + agr_x, 230], [1200 + agr_x, 250], [1250 + agr_x, 550], [1140 + agr_x, 435],
+                                  [1000 + agr_x, 550]]
+        coordenas_para_los_objetos = []
+        n = 1
+        cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
+        cte_eje_y = 50
+        while n <= 11:
+            coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante)
+            coordenas_pisoflotante.remove(coordenas__choicepisoflotante)
+
+            cordenadas_lista = [coordenas__choicepisoflotante]
+            coordenas_para_los_objetos.append(coordenas__choicepisoflotante)
+
+            for p in cordenadas_lista:
+                pisoaire = arcade.Sprite("planetHalf.png", 0.6)
+                pisoaire.position = p
+                self.pisos_list.append(pisoaire)
+                self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
+
+                n += 1
+
+        for i in range(8):
+            k = random.choice(coordenas_para_los_objetos)
+            coordenas_para_los_objetos.remove(k)
+            o = random.choice(cosas)
+
+            if o == "alcohol gel.png":
+                material = arcade.Sprite(o, escala_gel)
+                material.position = k[0], k[1] + cte_eje_y
+                self.objetos_list.append(material)
+            elif o == "guantes.png":
+                material = arcade.Sprite(o, escala_guantes)
+                material.position = k[0], k[1] + cte_eje_y
+                self.objetos_list.append(material)
+            elif o == "mascara.png":
+                material = arcade.Sprite(o, escala_mask)
+                material.position = k[0], k[1] + cte_eje_y
+                self.objetos_list.append(material)
+
 
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
@@ -366,12 +448,11 @@ class MyGame(arcade.View):
         # Rastrear si necesitamos cambiar la ventana gráfica
 
         changed = False
-
-            # Desplazarse a la izquierda
-        #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-        #if self.player_sprite.left < left_boundary:
-            #self.view_left -= left_boundary - self.player_sprite.left
-            #changed = True
+        # Desplazarse a la izquierda
+        left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+        if self.player_sprite.left < left_boundary:
+            self.view_left -= left_boundary - self.player_sprite.left
+            changed = True
 
         # Desplazarse a la derecha
         right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
