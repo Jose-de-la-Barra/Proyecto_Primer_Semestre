@@ -30,10 +30,10 @@ arcade.play_sound(arcade.load_sound("cancion.mp3"))
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
-# LEFT_VIEWPORT_MARGIN = 0
-# RIGHT_VIEWPORT_MARGIN = 0
-# BOTTOM_VIEWPORT_MARGIN = 0
-# TOP_VIEWPORT_MARGIN = 0
+LEFT_VIEWPORT_MARGIN = 0
+RIGHT_VIEWPORT_MARGIN = 0
+BOTTOM_VIEWPORT_MARGIN = 0
+TOP_VIEWPORT_MARGIN = 0
 
 class Virus(arcade.Sprite):
 
@@ -124,8 +124,7 @@ class MyGame(arcade.View):
         for i in range(800, 1500, 150):
             pasto = arcade.Sprite("grass.png", escala_sol)
             pasto.center_x = i
-            pasto.center_y = 93
-            self.decoracion_list.append(pasto)
+            pasto.center_y = 937
 
         # Crear personaje
         personaje = "adventurer_swim1.png"
@@ -336,6 +335,48 @@ class MyGame(arcade.View):
             view = GameOverView()
             self.window.show_view(view)
 
+         # --- Administrar desplazamiento ---
+
+        # Rastrear si necesitamos cambiar la ventana gráfica
+
+        changed = False
+
+            # Desplazarse a la izquierda
+        #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+        #if self.player_sprite.left < left_boundary:
+            #self.view_left -= left_boundary - self.player_sprite.left
+            #changed = True
+
+        # Desplazarse a la derecha
+        right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+        if self.player_sprite.right > right_boundary:
+            self.view_left += self.player_sprite.right - right_boundary
+            changed = True
+
+         # Desplazarse hacia arriba
+        #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+        #if self.player_sprite.top > top_boundary:
+            #self.view_bottom += self.player_sprite.top - top_boundary
+            #changed = True
+
+
+        # Desplazarse hacia abajo
+        #bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+        #if self.player_sprite.bottom < bottom_boundary:
+             #self.view_bottom -= bottom_boundary - self.player_sprite.bottom
+             #changed = True
+
+        if changed:
+            # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
+            # no se alineen en la pantalla
+             self.view_bottom = int(self.view_bottom)
+             self.view_left = int(self.view_left)
+
+        # Do the scrolling
+        arcade.set_viewport(self.view_left,
+                            SCREE_WIDHT + self.view_left,
+                            self.view_bottom,
+                            SCREE_HEIGHT + self.view_bottom)
 
 class GameOverView(arcade.View):
     """ View to show when game is over """
@@ -344,9 +385,9 @@ class GameOverView(arcade.View):
         """ This is run once when we switch to this view """
         super().__init__()
         self.texture = arcade.load_texture("Restart.png")
-
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
+        #MyGame.on_update(arcade.set_viewport())
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
 
     def on_draw(self):
@@ -360,7 +401,6 @@ class GameOverView(arcade.View):
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
-
 
 class Ventana_Ganador(arcade.View):
     """ View to show when game is over """
@@ -394,26 +434,25 @@ class Ventana_Ganador(arcade.View):
 # --- Administrar desplazamiento ---
 
 # Rastrear si necesitamos cambiar la ventana gráfica
-# changed = False
+    #changed = False
 
 # Desplazarse a la izquierda
-# left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-# if self.player_sprite.left < left_boundary:
-# self.view_left -= left_boundary - self.player_sprite.left
-# changed = True
+     #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
+     #if self.player_sprite.left < left_boundary:
+        #self.view_left -= left_boundary - self.player_sprite.left
+         #changed = True
 
 # Desplazarse a la derecha
-# right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
-# if self.player_sprite.right > right_boundary:
-#   self.view_left += self.player_sprite.right - right_boundary
-# changed = True
+     #right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
+     #if self.player_sprite.right > right_boundary:
+       #self.view_left += self.player_sprite.right - right_boundary
+        #changed = True
 
-# Desplazarse hacia arriba
-# top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-# if self.player_sprite.top > top_boundary:
-# self.view_bottom += self.player_sprite.top - top_boundary
-
-# changed = True
+#Desplazarse hacia arriba
+     #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
+     #if self.player_sprite.top > top_boundary:
+         #self.view_bottom += self.player_sprite.top - top_boundary
+         #changed = True
 
 # Desplazarse hacia abajo
 # bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
