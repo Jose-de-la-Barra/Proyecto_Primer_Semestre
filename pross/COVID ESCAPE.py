@@ -10,8 +10,8 @@ SCREE_TITLE = "COVID ESCAPE"
 # constantes para escalar sprites
 
 escala_personaje = 0.7
-
 escala_virus = 0.12
+escala_virus2 = 0.2
 escala_piso = 0.5
 escala_pisovolador = 0.43
 escala_guantes = 0.05
@@ -24,6 +24,7 @@ JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
+
 
 # arcade.play_sound(arcade.load_sound("cancion.mp3"))
 
@@ -62,16 +63,20 @@ class MyGame(arcade.View):
 
         self.player_list = None  # LISTA QUE CONTIENE PERSONAJE
         self.virus_list = None  # ...
+        self.virus2_list = None  # ...
         self.pisos_list = None
-        self.agua_list = None
+        self.agua_lava_list = None
         self.objetos_list = None
         self.decoracion_list = None
+        self.muralla_list = None
 
         self.player_sprite = None  # VARIABLE DEL SPRITE
         self.virus_sprite = None  # VARIABLE DEL SPRITE
+        self.virus2_sprite = None  # VARIABLE DEL SPRITE
         self.pisos_sprite = None  # ...
         self.objetos_sprite = None
         self.decoracion_sprite = None
+        self.muralla_sprite = None
 
         self.physics_engine = None  # le damos características de la función physics_engine a nuestro objeto
         self.wall_list = None  # creamos esta característica para más adelante poder identificar ciertos objetos que no se pueden atravesar (piso, piso flotante).
@@ -88,11 +93,14 @@ class MyGame(arcade.View):
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
         self.virus_list = arcade.SpriteList()
+        self.virus2_list = arcade.SpriteList()
         self.pisos_list = arcade.SpriteList()
-        self.agua_list = arcade.SpriteList()
+        self.agua_lava_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
         self.decoracion_list = arcade.SpriteList()
         self.player_sprite = arcade.AnimatedWalkingSprite()
+        self.muralla_list = arcade.SpriteList()
+
 
 
 #con lo siguiente creamos el personaje y le damos movimiento animado(100-118)
@@ -162,6 +170,13 @@ class MyGame(arcade.View):
         virus.center_y = 105
         self.virus_list.append(virus)
 
+        #segundo virus
+        virus2 = Virus("virus2.png", escala_virus2)  # hereda las características de la clase Virus
+        virus2.center_x = 2100
+        virus2.center_y = 105
+        self.virus2_list.append(virus2)
+
+
         # crear piso con un loop de la imagen
         for i in range(320, 470, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
@@ -182,7 +197,7 @@ class MyGame(arcade.View):
             piso = arcade.Sprite("waterTop_high.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
-            self.agua_list.append(piso)
+            self.agua_lava_list.append(piso)
         # tope del mapa por la izquierda
 
         n = 0
@@ -289,6 +304,14 @@ class MyGame(arcade.View):
             self.decoracion_list.append(self.decoracion_sprite)
             cont = 850
 
+        for i in range(94,1080,80):
+            muralla = arcade.Sprite("columna.png", escala_piso)
+            muralla.center_x = 1325
+            muralla.center_y = i
+            self.muralla_list.append(muralla)
+            self.wall_list.append(muralla)
+
+
         # SEGUNDA PIEZA
 
         # piso
@@ -308,11 +331,11 @@ class MyGame(arcade.View):
 
         # lava
         for i in range(1606, 1780, 64):
-            piso = arcade.Sprite("lavaTop_high.png", escala_piso)
-            piso.center_x = i
-            piso.center_y = 32
-            self.pisos_list.append(piso)
-            self.wall_list.append(piso)
+            lava = arcade.Sprite("lavaTop_high.png", escala_piso)
+            lava.center_x = i
+            lava.center_y = 32
+            self.agua_lava_list.append(lava)
+
 
         # plataformas
         agr_x = 1350
@@ -331,7 +354,7 @@ class MyGame(arcade.View):
             coordenas_para_los_objetos.append(coordenas__choicepisoflotante)
 
             for p in cordenadas_lista:
-                pisoaire = arcade.Sprite("planetHalf.png", 0.6)
+                pisoaire = arcade.Sprite("ground_cake_small_broken.png", escala_pisovolador)
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
                 self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
@@ -373,10 +396,11 @@ class MyGame(arcade.View):
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.pisos_list.draw()
-        self.agua_list.draw()
+        self.agua_lava_list.draw()
         self.objetos_list.draw()
         self.wall_list.draw()
         self.virus_list.draw()
+        self.virus2_list.draw()
 
         # Dibuja nuestro puntaje en la pantalla, desplazándolo con la ventana gráfica
         score_text = f"Score: {self.score}"
@@ -403,6 +427,7 @@ class MyGame(arcade.View):
         self.player_list.update_animation()
         self.physics_engine.update()
         virus_hit = arcade.check_for_collision_with_list(self.player_sprite, self.virus_list)
+        virus_hit2 = arcade.check_for_collision_with_list(self.player_sprite, self.virus2_list)
 
         # Mira si golpeamos algun objeto
         objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.objetos_list)
@@ -414,9 +439,20 @@ class MyGame(arcade.View):
             arcade.play_sound(self.collect_objetos_sound)
             self.score += 1  # Agrega uno al puntaje
 
-        # if self.score > 2:
+        if self.score >= 10:
+            for virus2 in self.virus2_list:
+                virus2.follow_sprite(self.player_sprite)
+
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
+
+        if self.score == 10 and virus_hit :
+
+            for i in self.virus_list:
+                i.remove_from_sprite_lists()
+            for k in self.muralla_list:
+                k.remove_from_sprite_lists()
+
 
         if self.score == 8:
             cordenada_vacuna = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
@@ -428,20 +464,37 @@ class MyGame(arcade.View):
             self.objetos_list.append(vacuna)
             self.score = 9
 
+        agr_x = 1350
+        cte_eje_y = 64
+        if self.score == 18:
+            cordenada_vacuna2 = [[40 + agr_x, 460], [210 + agr_x, 550], [600 + agr_x, 390], [730 + agr_x, 550], [185 + agr_x, 360], [330 + agr_x, 440], [1020 + agr_x, 330],
+                                  [480 + agr_x, 550], [840 + agr_x, 430], [400 + agr_x, 230], [820 + agr_x, 230], [1200 + agr_x, 250], [1250 + agr_x, 550], [1140 + agr_x, 435],
+                                  [1000 + agr_x, 550]]
+            k = random.choice(cordenada_vacuna2)
+            vacuna2 = arcade.Sprite("VACUNA.png", 0.1)
+            vacuna2.position = k[0], k[1] + cte_eje_y
+            self.objetos_list.append(vacuna2)
+            self.score = 19
+
         if (self.score < 10) and virus_hit:
             view = GameOverView()
             self.window.show_view(view)
 
-        elif self.score == 10 and virus_hit:
+        elif (self.score < 20) and virus_hit2:
+            view = GameOverView()
+            self.window.show_view(view)
+
+        elif self.score == 20 and virus_hit2:
             view = Ventana_Ganador()
             self.window.show_view(view)
 
         # Para que pierda cuando toque el agua
-        agua_hit = arcade.check_for_collision_with_list(self.player_sprite, self.agua_list)
-        if agua_hit:
+        aguaLava_hit = arcade.check_for_collision_with_list(self.player_sprite, self.agua_lava_list)
+        if aguaLava_hit:
             time.sleep(.3)
             view = GameOverView()
             self.window.show_view(view)
+
 
          # --- Administrar desplazamiento ---
 
