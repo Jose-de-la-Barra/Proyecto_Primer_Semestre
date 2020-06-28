@@ -322,14 +322,14 @@ class MyGame(arcade.View):
 
         # piso
         for i in range(1350, 1600, 64):
-            piso = arcade.Sprite("planetMid.png", escala_piso)
+            piso = arcade.Sprite("stoneMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
         for i in range(1798, 3000, 64):
-            piso = arcade.Sprite("planetMid.png", escala_piso)
+            piso = arcade.Sprite("stoneMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
@@ -360,7 +360,7 @@ class MyGame(arcade.View):
             coordenas_para_los_objetos.append(coordenas__choicepisoflotante)
 
             for p in cordenadas_lista:
-                pisoaire = arcade.Sprite("ground_cake_small_broken.png", escala_pisovolador)
+                pisoaire = arcade.Sprite("ground_stone_small_broken.png", escala_pisovolador)
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
                 self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
