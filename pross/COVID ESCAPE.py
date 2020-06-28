@@ -466,14 +466,14 @@ class MyGame(arcade.View):
             arcade.play_sound(self.collect_objetos_sound)
             self.score += 1  # Agrega uno al puntaje
 
-        #if self.score >= 10:
-         #   for virus2 in self.virus2_list:
-          #      virus2.follow_sprite(self.player_sprite)
+        if self.score >= 10:
+            for virus2 in self.virus2_list:
+                virus2.follow_sprite(self.player_sprite)
 
-       # for virus in self.virus_list:
-        #    virus.follow_sprite(self.player_sprite)
+        for virus in self.virus_list:
+            virus.follow_sprite(self.player_sprite)
 
-        if self.score == 1: #and virus_hit :
+        if self.score == 10 and virus_hit :
 
             for i in self.virus_list:
                 i.remove_from_sprite_lists()
