@@ -260,9 +260,8 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # asignar coordenadas fijas a el piso flotante
-        coordenas_pisoflotante = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
-                                  [480, 550], [840, 430], [400, 230], [820, 230], [1200, 250], [1250, 550], [1140, 435],
-                                  [1000, 550]]
+        coordenas_pisoflotante = [[40, 460], [185, 360],[210, 550], [330, 440],[400, 230],[480, 550],[600, 390], [730, 550],  [820, 230],
+                                   [840, 430],[1000, 550], [1020, 330], [1140, 435],[1200, 250], [1250, 550]]
         coordenas_para_los_objetos = []
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
@@ -321,14 +320,14 @@ class MyGame(arcade.View):
         # SEGUNDA PIEZA
 
         # piso
-        for i in range(1350, 1600, 64):
+        for i in range(1350, 1930, 64):
             piso = arcade.Sprite("stoneMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for i in range(1798, 3000, 64):
+        for i in range(2196, 3000, 64):
             piso = arcade.Sprite("stoneMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
@@ -336,7 +335,7 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # lava
-        for i in range(1606, 1780, 64):
+        for i in range(1940, 2140 , 64):
             lava = arcade.Sprite("lavaTop_high.png", escala_piso)
             lava.center_x = i
             lava.center_y = 32
@@ -345,16 +344,19 @@ class MyGame(arcade.View):
 
         # plataformas
         agr_x = 1350
-        coordenas_pisoflotante = [[40 + agr_x, 460], [210 + agr_x, 550], [600 + agr_x, 390], [730 + agr_x, 550], [185 + agr_x, 360], [330 + agr_x, 440], [1020 + agr_x, 330],
-                                  [480 + agr_x, 550], [840 + agr_x, 430], [400 + agr_x, 230], [820 + agr_x, 230], [1200 + agr_x, 250], [1250 + agr_x, 550], [1140 + agr_x, 435],
-                                  [1000 + agr_x, 550]]
+
+
+        coordenas_pisoflotante2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
+                                  [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
+
+
         coordenas_para_los_objetos = []
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
         cte_eje_y = 50
         while n <= 11:
-            coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante)
-            coordenas_pisoflotante.remove(coordenas__choicepisoflotante)
+            coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante2)
+            coordenas_pisoflotante2.remove(coordenas__choicepisoflotante)
 
             cordenadas_lista = [coordenas__choicepisoflotante]
             coordenas_para_los_objetos.append(coordenas__choicepisoflotante)
@@ -464,14 +466,14 @@ class MyGame(arcade.View):
             arcade.play_sound(self.collect_objetos_sound)
             self.score += 1  # Agrega uno al puntaje
 
-        if self.score >= 10:
-            for virus2 in self.virus2_list:
-                virus2.follow_sprite(self.player_sprite)
+        #if self.score >= 10:
+         #   for virus2 in self.virus2_list:
+          #      virus2.follow_sprite(self.player_sprite)
 
-        for virus in self.virus_list:
-            virus.follow_sprite(self.player_sprite)
+       # for virus in self.virus_list:
+        #    virus.follow_sprite(self.player_sprite)
 
-        if self.score == 10 and virus_hit :
+        if self.score == 1: #and virus_hit :
 
             for i in self.virus_list:
                 i.remove_from_sprite_lists()
@@ -491,9 +493,8 @@ class MyGame(arcade.View):
         agr_x = 1350
         cte_eje_y = 64
         if self.score == 18:
-            cordenada_vacuna2 = [[40 + agr_x, 460], [210 + agr_x, 550], [600 + agr_x, 390], [730 + agr_x, 550], [185 + agr_x, 360], [330 + agr_x, 440], [1020 + agr_x, 330],
-                                  [480 + agr_x, 550], [840 + agr_x, 430], [400 + agr_x, 230], [820 + agr_x, 230], [1200 + agr_x, 250], [1250 + agr_x, 550], [1140 + agr_x, 435],
-                                  [1000 + agr_x, 550]]
+            cordenada_vacuna2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
+                                  [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
             k = random.choice(cordenada_vacuna2)
             vacuna2 = arcade.Sprite("VACUNA.png", 0.1)
             vacuna2.position = k[0], k[1] + cte_eje_y
