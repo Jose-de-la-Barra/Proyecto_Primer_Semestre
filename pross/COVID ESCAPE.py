@@ -39,6 +39,7 @@ BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
 
 MUSIC_VOLUME = 0.1
+MUSIC_VOLUME_HIGH = 0.5
 
 
 class Virus(arcade.Sprite):
@@ -409,6 +410,9 @@ class MyGame(arcade.View):
         # song before starting this one.
         time.sleep(0.03)
 
+        thevirusiscoming = Sonidos()
+        thevirusiscoming.fx_audio_mas_volumen("TheVirusIsComing.mp3")
+
     def gravedad(self):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
                                                              self.wall_list,
@@ -588,6 +592,18 @@ class Sonidos:
         self.sonidos.play(MUSIC_VOLUME)
         time.sleep(0.03)
 
+    def fx_audio_mas_volumen(self, archivo_audio):
+        self.sonidos = arcade.Sound(archivo_audio, streaming=True)
+        self.sonidos.play(MUSIC_VOLUME_HIGH)
+        time.sleep(0.03)
+
+        sonidos = MyGame()
+        if sonidos.score == 10:
+            self.sonidos = arcade.Sound("TheSeconVirusIsComing.mp3", streaming=True)
+            self.sonidos.play(MUSIC_VOLUME_HIGH)
+            time.sleep(0.03)
+
+
 
 class GameOverView(arcade.View):
     """ View to show when game is over """
@@ -600,6 +616,8 @@ class GameOverView(arcade.View):
         # to reset the viewport back to the start so we can see what we draw.
         #MyGame.on_update(arcade.set_viewport())
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+        gameover = Sonidos()
+        gameover.fx_audio_mas_volumen("GameOver.mp3")
 
     def on_draw(self):
         """ Draw this view """
@@ -624,6 +642,12 @@ class Ventana_Ganador(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+
+        youwin = Sonidos()
+        youwin.fx_audio_mas_volumen("YouWin.mp3")
+
+        musica_ganador = Sonidos()
+        musica_ganador.fx_audio("Musica_ganador.mp3")
 
     def on_draw(self):
         """ Draw this view """
