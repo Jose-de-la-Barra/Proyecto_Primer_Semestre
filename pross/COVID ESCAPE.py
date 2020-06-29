@@ -2,8 +2,8 @@ import arcade
 import random
 import time
 import os
-from pathlib import Path
-from typing import Union
+# from pathlib import Path
+# from typing import Union
 
 SCREE_WIDHT = 1300
 SCREE_HEIGHT = 700
@@ -72,6 +72,7 @@ class MyGame(arcade.View):
         self.agua_lava_list = None
         self.objetos_list = None
         self.decoracion_list = None
+        self.vacuna_list = None
 
         self.player_sprite = None  # VARIABLE DEL SPRITE
         self.virus_sprite = None  # VARIABLE DEL SPRITE
@@ -80,12 +81,10 @@ class MyGame(arcade.View):
         self.objetos_sprite = None
         self.decoracion_sprite = None
         self.muralla_sprite = None
+        self.vacuna_sprite = None
 
         self.physics_engine = None  # le damos características de la función physics_engine a nuestro objeto
         self.wall_list = None  # creamos esta característica para más adelante poder identificar ciertos objetos que no se pueden atravesar (piso, piso flotante).
-
-        self.collect_objetos_sound = arcade.load_sound("Recoger.mp3")  # Sonido cuando toma cosas el personaje
-        self.jump_sound = arcade.load_sound("salto.mp3")  # Efecto de sonido cuando salta el personaje
 
         self.music = None
         self.current_song = 0
@@ -107,6 +106,7 @@ class MyGame(arcade.View):
         self.decoracion_list = arcade.SpriteList()
         self.player_sprite = arcade.AnimatedWalkingSprite()
         self.muralla_list = arcade.SpriteList()
+        self.vacuna_list = arcade.SpriteList()
 
 
 #con lo siguiente creamos el personaje y le damos movimiento animado(100-118)
@@ -345,10 +345,8 @@ class MyGame(arcade.View):
         # plataformas
         agr_x = 1350
 
-
         coordenas_pisoflotante2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
                                   [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
-
 
         coordenas_para_los_objetos = []
         n = 1
@@ -396,6 +394,7 @@ class MyGame(arcade.View):
         # Play the song
         self.play_song()
 
+
     def play_song(self):
         """ Play the song. """
         # Stop what is currently playing.
@@ -428,6 +427,7 @@ class MyGame(arcade.View):
         self.wall_list.draw()
         self.virus_list.draw()
         self.virus2_list.draw()
+        self.vacuna_list.draw()
 
         # Dibuja nuestro puntaje en la pantalla, desplazándolo con la ventana gráfica
         score_text = f"Score: {self.score}"
@@ -438,7 +438,8 @@ class MyGame(arcade.View):
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
-                arcade.play_sound(self.jump_sound)  # Efecto sonido de salto cuando se presiona la tecla "UP"
+                salto = Sonidos() # Efecto sonido de salto cuando se presiona la tecla "UP"
+                salto.fx_audio("salto.mp3")
         elif key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
@@ -463,7 +464,17 @@ class MyGame(arcade.View):
             # Remueve el objeto
             objetos.remove_from_sprite_lists()
             # Hace un sonido al "tomar" el objeto
-            arcade.play_sound(self.collect_objetos_sound)
+            objetos = Sonidos()
+            objetos.fx_audio("Recoger.mp3")
+            self.score += 1  # Agrega uno al puntaje
+
+        vacunas_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.vacuna_list)
+        for objetos in vacunas_hit_list:
+            # Remueve el objeto
+            objetos.remove_from_sprite_lists()
+            # Hace un sonido al "tomar" el objeto
+            objetos = Sonidos()
+            objetos.fx_audio("vacuna.mp3")
             self.score += 1  # Agrega uno al puntaje
 
         if self.score >= 10:
@@ -487,7 +498,7 @@ class MyGame(arcade.View):
             k = random.choice(cordenada_vacuna)
             vacuna = arcade.Sprite("VACUNA.png", 0.1)
             vacuna.position = k[0], k[1] + 50
-            self.objetos_list.append(vacuna)
+            self.vacuna_list.append(vacuna)
             self.score = 9
 
         agr_x = 1350
@@ -498,19 +509,22 @@ class MyGame(arcade.View):
             k = random.choice(cordenada_vacuna2)
             vacuna2 = arcade.Sprite("VACUNA.png", 0.1)
             vacuna2.position = k[0], k[1] + cte_eje_y
-            self.objetos_list.append(vacuna2)
+            self.vacuna_list.append(vacuna2)
             self.score = 19
 
         if (self.score < 10) and virus_hit:
             view = GameOverView()
+            self.music.stop()
             self.window.show_view(view)
 
         elif (self.score < 20) and virus_hit2:
             view = GameOverView()
+            self.music.stop()
             self.window.show_view(view)
 
         elif self.score == 20 and virus_hit2:
             view = Ventana_Ganador()
+            self.music.stop()
             self.window.show_view(view)
 
         # Para que pierda cuando toque el agua
@@ -518,6 +532,7 @@ class MyGame(arcade.View):
         if aguaLava_hit:
             time.sleep(.3)
             view = GameOverView()
+            self.music.stop()
             self.window.show_view(view)
 
 
@@ -562,6 +577,16 @@ class MyGame(arcade.View):
                             SCREE_WIDHT + self.view_left,
                             self.view_bottom,
                             SCREE_HEIGHT + self.view_bottom)
+
+
+class Sonidos:
+    def __init__(self):
+        self.sonidos = None
+
+    def fx_audio(self, archivo_audio):
+        self.sonidos = arcade.Sound(archivo_audio, streaming=True)
+        self.sonidos.play(MUSIC_VOLUME)
+        time.sleep(0.03)
 
 
 class GameOverView(arcade.View):
