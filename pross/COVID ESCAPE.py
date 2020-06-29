@@ -41,6 +41,28 @@ TOP_VIEWPORT_MARGIN = 0
 MUSIC_VOLUME = 0.1
 MUSIC_VOLUME_HIGH = 0.5
 
+class InstructionView(arcade.View):
+    def on_show(self):
+         #Esto se ejecuta una vez cuando cambiamos a esta vista
+        arcade.set_background_color(arcade.csscolor.DARK_SLATE_BLUE)
+
+        # Reset the viewport, necessary if we have a scrolling game and we need
+        # to reset the viewport back to the start so we can see what we draw.
+        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+
+    def on_draw(self):
+        """ Dibuja esta vista """
+        arcade.start_render()
+        arcade.draw_text("Instrucciones", SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
+                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Click para avanzar", SCREE_WIDHT / 2, SCREE_HEIGHT / 2 - 75,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        """ Si el usuario presiona el botón del mouse, inicia el juego. """
+        game_view = MyGame()
+        game_view.setup()
+        self.window.show_view(game_view)
 
 class Virus(arcade.Sprite):
 
@@ -614,8 +636,7 @@ class GameOverView(arcade.View):
         self.texture = arcade.load_texture("Restart.png")
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
-        #MyGame.on_update(arcade.set_viewport())
-        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+        arcade.set_viewport(0, SCREE_WIDHT, 0, SCREE_HEIGHT)
         gameover = Sonidos()
         gameover.fx_audio_mas_volumen("GameOver.mp3")
 
@@ -632,7 +653,7 @@ class GameOverView(arcade.View):
         self.window.show_view(game_view)
 
 class Ventana_Ganador(arcade.View):
-    """ View to show when game is over """
+    """ Ver para mostrar cuando gane el juego """
 
     def __init__(self):
         """ This is run once when we switch to this view """
@@ -713,9 +734,9 @@ class Ventana_Ganador(arcade.View):
 
 def main():
     window = arcade.Window(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
-    start_view = MyGame()
+    start_view = InstructionView()
     window.show_view(start_view)
-    start_view.setup()
+    #start_view.setup()
     arcade.run()
 
 if __name__ == "__main__":
