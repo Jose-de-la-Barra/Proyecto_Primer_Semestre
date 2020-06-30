@@ -38,8 +38,8 @@ RIGHT_VIEWPORT_MARGIN = 250
 BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
 
-MUSIC_VOLUME = 0.1
-MUSIC_VOLUME_HIGH = 0.5
+MUSIC_VOLUME = 0.03
+MUSIC_VOLUME_HIGH = 0.25
 
 class InstructionView(arcade.View):
     def on_show(self):
@@ -466,29 +466,9 @@ class MyGame(arcade.View):
         # le agregamos gravedad a nuestro personaje sin permitirle atravesar el piso ni el piso flotante.
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
 
-        # musica
-        self.music_list = ["cancion.mp3"]
-        self.current_song = 0
-        # Play the song
-        self.play_song()
+        Audio().solo_una_vez("TheVirusIsComing.mp3")
+        Audio().on_update(delta_time=True)
 
-
-    def play_song(self):
-        """ Play the song. """
-        # Stop what is currently playing.
-        if self.music:
-            self.music.stop()
-
-        # Play the next song
-        self.music = arcade.Sound(self.music_list[self.current_song], streaming=True)
-        self.music.play(MUSIC_VOLUME)
-        # This is a quick delay. If we don't do this, our elapsed time is 0.0
-        # and on_update will think the music is over and advance us to the next
-        # song before starting this one.
-        time.sleep(0.03)
-
-        thevirusiscoming = Sonidos()
-        thevirusiscoming.fx_audio_mas_volumen("TheVirusIsComing.mp3")
 
     def gravedad(self):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
@@ -519,8 +499,8 @@ class MyGame(arcade.View):
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
-                salto = Sonidos() # Efecto sonido de salto cuando se presiona la tecla "UP"
-                salto.fx_audio("salto.mp3")
+                salto = Audio() # Efecto sonido de salto cuando se presiona la tecla "UP"
+                salto.solo_una_vez("salto.mp3")
         elif key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.RIGHT:
@@ -545,8 +525,7 @@ class MyGame(arcade.View):
             # Remueve el objeto
             objetos.remove_from_sprite_lists()
             # Hace un sonido al "tomar" el objeto
-            objetos = Sonidos()
-            objetos.fx_audio("Recoger.mp3")
+            Audio().solo_una_vez("Recoger.mp3")
             self.score += 1  # Agrega uno al puntaje
 
         vacunas_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.vacuna_list)
@@ -554,8 +533,7 @@ class MyGame(arcade.View):
             # Remueve el objeto
             objetos.remove_from_sprite_lists()
             # Hace un sonido al "tomar" el objeto
-            objetos = Sonidos()
-            objetos.fx_audio("vacuna.mp3")
+            Audio().solo_una_vez("vacuna.mp3")
             self.score += 1  # Agrega uno al puntaje
 
         if self.score >= 10:
@@ -565,8 +543,8 @@ class MyGame(arcade.View):
         for virus in self.virus_list:
             virus.follow_sprite(self.player_sprite)
 
-        if self.score == 10 and virus_hit :
-
+        if self.score == 10 and virus_hit:
+            Audio().solo_una_vez("TheSeconVirusIsComing.mp3")
             for i in self.virus_list:
                 i.remove_from_sprite_lists()
             for k in self.muralla_list:
@@ -580,6 +558,7 @@ class MyGame(arcade.View):
             vacuna = arcade.Sprite("VACUNA.png", 0.1)
             vacuna.position = k[0], k[1] + 50
             self.vacuna_list.append(vacuna)
+            Audio().solo_una_vez("LookForTheVaccine.mp3")
             self.score = 9
 
         agr_x = 1350
@@ -591,22 +570,19 @@ class MyGame(arcade.View):
             vacuna2 = arcade.Sprite("VACUNA.png", 0.1)
             vacuna2.position = k[0], k[1] + cte_eje_y
             self.vacuna_list.append(vacuna2)
+            Audio().solo_una_vez("LookForTheVaccine.mp3")
             self.score = 19
 
         if (self.score < 10) and virus_hit:
             view = GameOverView()
-            self.music.stop()
             self.window.show_view(view)
-
 
         elif (self.score < 20) and virus_hit2:
             view = GameOverView()
-            self.music.stop()
             self.window.show_view(view)
 
         elif self.score == 20 and virus_hit2:
             view = Ventana_Ganador()
-            self.music.stop()
             self.window.show_view(view)
 
         # Para que pierda cuando toque el agua
@@ -614,7 +590,6 @@ class MyGame(arcade.View):
         if aguaLava_hit:
             time.sleep(.3)
             view = GameOverView()
-            self.music.stop()
             self.window.show_view(view)
 
 
@@ -660,26 +635,40 @@ class MyGame(arcade.View):
                             self.view_bottom,
                             SCREE_HEIGHT + self.view_bottom)
 
-
-class Sonidos:
+class Audio:
     def __init__(self):
-        self.sonidos = None
+        super().__init__()
+        self.reproduce = None
+        self.music = []
+        self.rep = None
+        self.indice = 0
 
-    def fx_audio(self, archivo_audio):
-        self.sonidos = arcade.Sound(archivo_audio, streaming=True)
-        self.sonidos.play(MUSIC_VOLUME)
+    def solo_una_vez(self, archivo_audio):
+
+        if self.reproduce:
+            self.reproduce.stop()
+        self.reproduce = arcade.Sound(archivo_audio, streaming=True)
+
+        if archivo_audio == "Musica_ganador.mp3" or archivo_audio == "vacuna.mp3" or archivo_audio == "salto.mp3" or archivo_audio == "Recoger.mp3" or archivo_audio == "cancion.mp3":
+            self.reproduce.play(MUSIC_VOLUME)
+        else:
+            self.reproduce.play(MUSIC_VOLUME_HIGH)
         time.sleep(0.03)
 
-    def fx_audio_mas_volumen(self, archivo_audio):
-        self.sonidos = arcade.Sound(archivo_audio, streaming=True)
-        self.sonidos.play(MUSIC_VOLUME_HIGH)
-        time.sleep(0.03)
+    def on_update(self, delta_time):
 
-        sonidos = MyGame()
-        if sonidos.score == 10:
-            self.sonidos = arcade.Sound("TheSeconVirusIsComing.mp3", streaming=True)
-            self.sonidos.play(MUSIC_VOLUME_HIGH)
-            time.sleep(0.03)
+        self.music_list = ["cancion.mp3", "Musica_ganador.mp3"]
+        if self.rep:
+            self.rep.stop()
+
+        score = MyGame()
+        if score.score < 2:
+            self.indice = 0
+        else:
+            self.indice = 1
+
+        self.rep = arcade.Sound(self.music_list[self.indice], streaming=True)
+        self.rep.play(MUSIC_VOLUME)
 
 
 
@@ -693,8 +682,7 @@ class GameOverView(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, SCREE_WIDHT, 0, SCREE_HEIGHT)
-        gameover = Sonidos()
-        gameover.fx_audio_mas_volumen("GameOver.mp3")
+        Audio().solo_una_vez("GameOver.mp3")
 
     def on_draw(self):
         """ Draw this view """
@@ -720,11 +708,9 @@ class Ventana_Ganador(arcade.View):
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
 
-        youwin = Sonidos()
-        youwin.fx_audio_mas_volumen("YouWin.mp3")
-
-        musica_ganador = Sonidos()
-        musica_ganador.fx_audio("Musica_ganador.mp3")
+#        youwin = MyGame()
+#        youwin.("YouWin.mp3")
+#        Audio().musica_fondo()
 
     def on_draw(self):
         """ Draw this view """
