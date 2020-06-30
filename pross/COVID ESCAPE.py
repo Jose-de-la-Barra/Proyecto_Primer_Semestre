@@ -233,35 +233,35 @@ class MyGame(arcade.View):
         while n <= 192:
             for k in range(0, 800, 64):
                 pared = arcade.Sprite("grassCenter.png", escala_piso)
-                pared.center_x = -64 - n
+                pared.center_x = -128 - n
                 pared.center_y = k
                 self.wall_list.append(pared)
             n += 64
 
 
         # ciclo para la tierra superior con pasto
-        for i in range(0, 100, 64):
+        for i in range(-64, 100, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 224
             self.pisos_list.append(piso)
             self.wall_list.append(piso)  # el piso no se puede atravesar
         # los 3 siguietes ciclos son para la tieraa sin pasto
-        for p in range(0, 256, 64):
+        for p in range(-64, 256, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for p in range(0, 128, 64):
+        for p in range(-64, 128, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 160
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for p in range(0, 192, 64):
+        for p in range(-64, 192, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
             piso.center_x = p
             piso.center_y = 96
@@ -274,6 +274,7 @@ class MyGame(arcade.View):
             piso.position = descenso[p]
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
+
         # esquinas del piso
         esquinas = [[128, 160], [192, 96], [256, 32]]
         for p in range(len(esquinas)):
@@ -350,7 +351,7 @@ class MyGame(arcade.View):
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-        for i in range(2196, 3000, 64):
+        for i in range(2196, 2390, 64):
             piso = arcade.Sprite("stoneMid.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
@@ -363,6 +364,60 @@ class MyGame(arcade.View):
             lava.center_x = i
             lava.center_y = 32
             self.agua_lava_list.append(lava)
+
+            # parte cemento
+        for i in range(2586, 2750, 64):
+            piso2 = arcade.Sprite("stoneMid.png", escala_piso)
+            piso2.center_x = i
+            piso2.center_y = 224
+            self.pisos_list.append(piso2)
+            self.wall_list.append(piso2)
+
+        for i in range(2586, 2750, 64):
+            piso = arcade.Sprite("stoneCenter.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 160
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        for i in range(2522, 2750, 64):
+            piso = arcade.Sprite("stoneCenter.png", escala_piso)
+            piso.center_x = i
+            piso.center_y = 96
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        for p in range(2394, 2750, 64):
+            piso = arcade.Sprite("stoneCenter.png", escala_piso)
+            piso.center_x = p
+            piso.center_y = 32
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        acenso = [[2522, 224], [2458, 160], [2394, 96]]
+        for p in range(len(acenso)):
+            piso = arcade.Sprite("stoneHill_right.png", escala_piso)
+            piso.position = acenso[p]
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        esquinas2 = [[2522, 160], [2458, 96], [2394, 32]]
+        for p in range(len(esquinas2)):
+            piso = arcade.Sprite("stoneCorner_right.png", escala_piso)
+            piso.position = esquinas2[p]
+            self.pisos_list.append(piso)
+            self.wall_list.append(piso)
+
+        # tope del mapa por la derecha
+
+        n = 0
+        while n <= 192:
+            for k in range(0, 800, 64):
+                pared = arcade.Sprite("stoneCenter.png", escala_piso)
+                pared.center_x = 2777 + n
+                pared.center_y = k
+                self.wall_list.append(pared)
+            n += 64
 
 
         # plataformas
@@ -542,6 +597,7 @@ class MyGame(arcade.View):
             view = GameOverView()
             self.music.stop()
             self.window.show_view(view)
+
 
         elif (self.score < 20) and virus_hit2:
             view = GameOverView()
