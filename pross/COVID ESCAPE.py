@@ -41,21 +41,20 @@ MUSIC_VOLUME = 0.03
 MUSIC_VOLUME_HIGH = 0.25
 
 class InstructionView(arcade.View):
-    def on_show(self):
-         #Esto se ejecuta una vez cuando cambiamos a esta vista
-        arcade.set_background_color(arcade.csscolor.DARK_SLATE_BLUE)
 
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
+    def __init__(self):
+        """ This is run once when we switch to this view """
+        super().__init__()
+        self.texture = arcade.load_texture("Instrucciones.jpg")
+        # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
+        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
 
     def on_draw(self):
         """ Dibuja esta vista """
         arcade.start_render()
-        arcade.draw_text("Instrucciones", SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Click para avanzar", SCREE_WIDHT / 2, SCREE_HEIGHT / 2 - 75,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
+                                SCREE_WIDHT, SCREE_HEIGHT)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ Si el usuario presiona el botón del mouse, inicia el juego. """
