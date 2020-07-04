@@ -2,15 +2,13 @@ import arcade
 import random
 import time
 import os
-# from pathlib import Path
-# from typing import Union
 
+# Dimensiones pantalla
 SCREE_WIDHT = 1300
 SCREE_HEIGHT = 700
 SCREE_TITLE = "COVID ESCAPE"
 
 # constantes para escalar sprites
-
 escala_personaje = 0.7
 escala_virus = 0.12
 escala_virus2 = 0.2
@@ -25,7 +23,8 @@ escala_sol = 0.5
 JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
-VIRUS_SPEED = 2
+VIRUS_SPEED = .1
+VIRUS2_SPEED = .1
 
 
 # arcade.play_sound(arcade.load_sound("cancion.mp3"))
@@ -80,19 +79,33 @@ class Virus(arcade.Sprite):
             self.center_x -= min(VIRUS_SPEED, self.center_x - player_sprite.center_x)
 
 
+class Virus2(arcade.Sprite):
+
+    def follow_sprite(self, player_sprite):
+        # Esta función es para que el virus (self) se mueva hacia el personaje (player.sprite).
+
+        if self.center_y < player_sprite.center_y:
+            self.center_y += min(VIRUS2_SPEED, player_sprite.center_y - self.center_y)
+        elif self.center_y > player_sprite.center_y:
+            self.center_y -= min(VIRUS2_SPEED, self.center_y - player_sprite.center_y)
+
+        if self.center_x < player_sprite.center_x:
+            self.center_x += min(VIRUS2_SPEED, player_sprite.center_x - self.center_x)
+        elif self.center_x > player_sprite.center_x:
+            self.center_x -= min(VIRUS2_SPEED, self.center_x - player_sprite.center_x)
+
+
 class MyGame(arcade.View):
     def __init__(self):
         super().__init__()
         arcade.set_background_color(arcade.color.ALICE_BLUE)
 
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(file_path)
-
         self.player_list = None  # LISTA QUE CONTIENE PERSONAJE
         self.virus_list = None  # ...
         self.virus2_list = None  # ...
         self.pisos_list = None
-        self.agua_lava_list = None
+        self.agua_list = None
+        self.lava_list = None
         self.objetos_list = None
         self.decoracion_list = None
         self.vacuna_list = None
@@ -124,15 +137,16 @@ class MyGame(arcade.View):
         self.virus_list = arcade.SpriteList()
         self.virus2_list = arcade.SpriteList()
         self.pisos_list = arcade.SpriteList()
-        self.agua_lava_list = arcade.SpriteList()
+        self.agua_list = arcade.SpriteList()
+        self.lava_list = arcade.SpriteList()
         self.objetos_list = arcade.SpriteList()
         self.decoracion_list = arcade.SpriteList()
         self.player_sprite = arcade.AnimatedWalkingSprite()
         self.muralla_list = arcade.SpriteList()
         self.vacuna_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
 
-
-#con lo siguiente creamos el personaje y le damos movimiento animado(100-118)
+        # con lo siguiente creamos el personaje y le damos movimiento animado(148 - 166)
         self.player_sprite.stand_right_textures = []
         self.player_sprite.stand_right_textures.append(arcade.load_texture("adventurer_stand.png"))
 
@@ -152,8 +166,6 @@ class MyGame(arcade.View):
         self.player_sprite.center_y = 400
         self.player_list.append(self.player_sprite)
 
-        #        self.player_list.append(self.player_sprite)
-        self.wall_list = arcade.SpriteList()
         # AMBIENTE
         sol = "sun1.png"
         self.decoracion_sprite = arcade.Sprite(sol, 1)
@@ -178,6 +190,7 @@ class MyGame(arcade.View):
         # Se utiliza para realizar un seguimiento de nuestro desplazamiento
         self.view_bottom = 0
         self.view_left = 0
+
         # Puntuación
         self.score = 0  # Lleva un registro de la puntuación
 
@@ -186,25 +199,17 @@ class MyGame(arcade.View):
             pasto.center_x = i
             pasto.center_y = 937
 
-        # Crear personaje
-        #personaje = "adventurer_swim1.png"
-        #self.player_sprite = arcade.Sprite(personaje, escala_personaje)
-        #self.player_sprite.center_x = 64
-        #self.player_sprite.center_y = 400
-        #self.player_list.append(self.player_sprite)
-
         # CREAR VIRUS
         virus = Virus("virus.png", escala_virus)  # hereda las características de la clase Virus
         virus.center_x = 1107
         virus.center_y = 105
         self.virus_list.append(virus)
 
-        #segundo virus
-        virus2 = Virus("virus2.png", escala_virus2)  # hereda las características de la clase Virus
+        # Segundo virus
+        virus2 = Virus2("virus2.png", escala_virus2)  # hereda las características de la clase Virus
         virus2.center_x = 2100
         virus2.center_y = 105
         self.virus2_list.append(virus2)
-
 
         # crear piso con un loop de la imagen
         for i in range(320, 470, 64):
@@ -213,7 +218,7 @@ class MyGame(arcade.View):
             piso.center_y = 32
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
-            # el ciclo de arriba y este de abajo es para el piso con pastito
+        # el ciclo de arriba y este de abajo es para el piso con pastito
         for i in range(736, 1350, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
             piso.center_x = i
@@ -221,14 +226,14 @@ class MyGame(arcade.View):
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
 
-            # ciclo para el agua
+        # ciclo para el agua
         for i in range(510, 710, 64):
             piso = arcade.Sprite("waterTop_high.png", escala_piso)
             piso.center_x = i
             piso.center_y = 32
-            self.agua_lava_list.append(piso)
-        # tope del mapa por la izquierda
+            self.agua_list.append(piso)
 
+        # tope del mapa por la izquierda
         n = 0
         while n <= 192:
             for k in range(0, 800, 64):
@@ -238,7 +243,6 @@ class MyGame(arcade.View):
                 self.wall_list.append(pared)
             n += 64
 
-
         # ciclo para la tierra superior con pasto
         for i in range(-64, 100, 64):
             piso = arcade.Sprite("grassMid.png", escala_piso)
@@ -246,6 +250,7 @@ class MyGame(arcade.View):
             piso.center_y = 224
             self.pisos_list.append(piso)
             self.wall_list.append(piso)  # el piso no se puede atravesar
+
         # los 3 siguietes ciclos son para la tieraa sin pasto
         for p in range(-64, 256, 64):
             piso = arcade.Sprite("grassCenter.png", escala_piso)
@@ -267,6 +272,7 @@ class MyGame(arcade.View):
             piso.center_y = 96
             self.pisos_list.append(piso)
             self.wall_list.append(piso)
+
         # sprite que muestra como si estuviera en bajada
         descenso = [[128, 224], [192, 160], [256, 96]]
         for p in range(len(descenso)):
@@ -340,9 +346,7 @@ class MyGame(arcade.View):
             self.muralla_list.append(muralla)
             self.wall_list.append(muralla)
 
-
         # SEGUNDA PIEZA
-
         # piso
         for i in range(1350, 1930, 64):
             piso = arcade.Sprite("stoneMid.png", escala_piso)
@@ -359,13 +363,13 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # lava
-        for i in range(1940, 2140 , 64):
+        for i in range(1940, 2140, 64):
             lava = arcade.Sprite("lavaTop_high.png", escala_piso)
             lava.center_x = i
             lava.center_y = 32
-            self.agua_lava_list.append(lava)
+            self.lava_list.append(lava)
 
-            # parte cemento
+        # parte cemento
         for i in range(2586, 2750, 64):
             piso2 = arcade.Sprite("stoneMid.png", escala_piso)
             piso2.center_x = i
@@ -409,7 +413,6 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # tope del mapa por la derecha
-
         n = 0
         while n <= 192:
             for k in range(0, 800, 64):
@@ -418,7 +421,6 @@ class MyGame(arcade.View):
                 pared.center_y = k
                 self.wall_list.append(pared)
             n += 64
-
 
         # plataformas
         agr_x = 1350
@@ -433,7 +435,6 @@ class MyGame(arcade.View):
         while n <= 11:
             coordenas__choicepisoflotante = random.choice(coordenas_pisoflotante2)
             coordenas_pisoflotante2.remove(coordenas__choicepisoflotante)
-
             cordenadas_lista = [coordenas__choicepisoflotante]
             coordenas_para_los_objetos.append(coordenas__choicepisoflotante)
 
@@ -442,7 +443,6 @@ class MyGame(arcade.View):
                 pisoaire.position = p
                 self.pisos_list.append(pisoaire)
                 self.wall_list.append(pisoaire)  # el piso flotante no se puede atravesar
-
                 n += 1
 
         for i in range(8):
@@ -469,13 +469,13 @@ class MyGame(arcade.View):
         Audio().solo_una_vez("TheVirusIsComing.mp3")
         Audio().on_update(delta_time=True)
 
-
     def gravedad(self):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
                                                              self.wall_list,
                                                              gravity_constant=GRAVITY)
 
     def on_draw(self):
+        # Se aclara todo lo que aparecerá en pantalla
         arcade.start_render()
         self.decoracion_list.draw()
         arcade.draw_text("PELIGRO!\nCOVID-19", 1100, 111, arcade.color.DARK_CANDY_APPLE_RED, 15, width=100,
@@ -483,7 +483,8 @@ class MyGame(arcade.View):
                          anchor_x="center", anchor_y="center")
         self.player_list.draw()
         self.pisos_list.draw()
-        self.agua_lava_list.draw()
+        self.agua_list.draw()
+        self.lava_list.draw()
         self.objetos_list.draw()
         self.wall_list.draw()
         self.virus_list.draw()
@@ -491,15 +492,15 @@ class MyGame(arcade.View):
         self.vacuna_list.draw()
 
         # Dibuja nuestro puntaje en la pantalla, desplazándolo con la ventana gráfica
-        score_text = f"Score: {self.score}"
-        arcade.draw_text(score_text, 10, 10, arcade.csscolor.WHITE, 18)
+#        score_text = f"Score: {self.score}"
+#        arcade.draw_text(score_text, 10, 10, arcade.csscolor.WHITE, 18)
 
     def on_key_press(self, key, modifiers):  # se llama cada vez que presionamos una tecla
 
         if key == arcade.key.UP:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = JUMP_SPEED
-                salto = Audio() # Efecto sonido de salto cuando se presiona la tecla "UP"
+                salto = Audio()  # Efecto sonido de salto cuando se presiona la tecla "UP"
                 salto.solo_una_vez("salto.mp3")
         elif key == arcade.key.LEFT:
             self.player_sprite.change_x = -MOVEMENT_SPEED
@@ -507,7 +508,6 @@ class MyGame(arcade.View):
             self.player_sprite.change_x = MOVEMENT_SPEED
 
     def on_key_release(self, key, modifiers):  # para cuando el usuario suelta la tecla
-        """Called when the user releases a key. """
         if key == arcade.key.LEFT or key == arcade.key.RIGHT:
             self.player_sprite.change_x = 0
 
@@ -517,9 +517,9 @@ class MyGame(arcade.View):
         self.physics_engine.update()
         virus_hit = arcade.check_for_collision_with_list(self.player_sprite, self.virus_list)
         virus_hit2 = arcade.check_for_collision_with_list(self.player_sprite, self.virus2_list)
-
         # Mira si golpeamos algun objeto
         objetos_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.objetos_list)
+
         # Recorre cada objeto que golpeamos (si hay alguno) y lo retira el objeto de  para monedas en objetos_hit_list:
         for objetos in objetos_hit_list:
             # Remueve el objeto
@@ -527,7 +527,6 @@ class MyGame(arcade.View):
             # Hace un sonido al "tomar" el objeto
             Audio().solo_una_vez("Recoger.mp3")
             self.score += 1  # Agrega uno al puntaje
-
         vacunas_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.vacuna_list)
         for objetos in vacunas_hit_list:
             # Remueve el objeto
@@ -545,12 +544,13 @@ class MyGame(arcade.View):
 
         if self.score == 10 and virus_hit:
             Audio().solo_una_vez("TheSeconVirusIsComing.mp3")
+            Audio().solo_una_vez("boing.mp3")
             for i in self.virus_list:
                 i.remove_from_sprite_lists()
             for k in self.muralla_list:
                 k.remove_from_sprite_lists()
 
-        if self.score == 8:
+        if self.score == 8:  # para que aparezca la vacuna
             cordenada_vacuna = [[40, 460], [210, 550], [600, 390], [730, 550], [185, 360], [330, 440], [1020, 330],
                                 [480, 550], [840, 430], [400, 230], [820, 230], [1200, 250], [1250, 550], [1140, 435],
                                 [1000, 550]]
@@ -563,7 +563,7 @@ class MyGame(arcade.View):
 
         agr_x = 1350
         cte_eje_y = 64
-        if self.score == 18:
+        if self.score == 18:  # para que aparezca la vacuna
             cordenada_vacuna2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
                                   [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
             k = random.choice(cordenada_vacuna2)
@@ -574,29 +574,35 @@ class MyGame(arcade.View):
             self.score = 19
 
         if (self.score < 10) and virus_hit:
-            view = GameOverView()
+            view = GameOverView("game-over.jpg")
             self.window.show_view(view)
 
         elif (self.score < 20) and virus_hit2:
-            view = GameOverView()
+            view = GameOverView("game-over.jpg")
             self.window.show_view(view)
 
         elif self.score == 20 and virus_hit2:
-            view = Ventana_Ganador()
+            view = Ventana_Ganador("WINNER.jpg")
+            Audio().solo_una_vez("boing.mp3")
+            Audio().solo_una_vez("YouWin.mp3")
             self.window.show_view(view)
 
         # Para que pierda cuando toque el agua
-        aguaLava_hit = arcade.check_for_collision_with_list(self.player_sprite, self.agua_lava_list)
-        if aguaLava_hit:
+        agua_hit = arcade.check_for_collision_with_list(self.player_sprite, self.agua_list)
+        if agua_hit:
             time.sleep(.3)
-            view = GameOverView()
+            view = GameOverView("looser-agua.jpg")
             self.window.show_view(view)
 
+        # Para que pierda cuando toque la lava
+        lava_hit = arcade.check_for_collision_with_list(self.player_sprite, self.lava_list)
+        if lava_hit:
+            time.sleep(.3)
+            view = GameOverView("looser-lava.jpg")
+            self.window.show_view(view)
 
-         # --- Administrar desplazamiento ---
-
+        # --- Administrar desplazamiento ---
         # Rastrear si necesitamos cambiar la ventana gráfica
-
         changed = False
         # Desplazarse a la izquierda
         left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
@@ -610,26 +616,13 @@ class MyGame(arcade.View):
             self.view_left += self.player_sprite.right - right_boundary
             changed = True
 
-         # Desplazarse hacia arriba
-        #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-        #if self.player_sprite.top > top_boundary:
-            #self.view_bottom += self.player_sprite.top - top_boundary
-            #changed = True
-
-
-        # Desplazarse hacia abajo
-        #bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-        #if self.player_sprite.bottom < bottom_boundary:
-             #self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-             #changed = True
-
         if changed:
             # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
             # no se alineen en la pantalla
              self.view_bottom = int(self.view_bottom)
              self.view_left = int(self.view_left)
 
-        # Do the scrolling
+        # Hacer el seguimiento
         arcade.set_viewport(self.view_left,
                             SCREE_WIDHT + self.view_left,
                             self.view_bottom,
@@ -638,17 +631,18 @@ class MyGame(arcade.View):
 class Audio:
     def __init__(self):
         super().__init__()
+        # crear variables
         self.reproduce = None
         self.music = []
         self.rep = None
         self.indice = 0
 
     def solo_una_vez(self, archivo_audio):
-
-        if self.reproduce:
+        if self.reproduce:  # parar la música que se esta reproduciendo actualmente
             self.reproduce.stop()
         self.reproduce = arcade.Sound(archivo_audio, streaming=True)
 
+        # definir volumen distinto para cada archivo
         if archivo_audio == "Musica_ganador.mp3" or archivo_audio == "vacuna.mp3" or archivo_audio == "salto.mp3" or archivo_audio == "Recoger.mp3" or archivo_audio == "cancion.mp3":
             self.reproduce.play(MUSIC_VOLUME)
         else:
@@ -661,117 +655,68 @@ class Audio:
         if self.rep:
             self.rep.stop()
 
-        score = MyGame()
-        if score.score < 2:
-            self.indice = 0
-        else:
-            self.indice = 1
+#        score = MyGame()
+#        if score.score < 2:
+#            self.indice = 0
+#        else:
+#            self.indice = 1
 
         self.rep = arcade.Sound(self.music_list[self.indice], streaming=True)
         self.rep.play(MUSIC_VOLUME)
 
 
-
 class GameOverView(arcade.View):
     """ View to show when game is over """
 
-    def __init__(self):
-        """ This is run once when we switch to this view """
+    def __init__(self, archivo_de_imagen):
+        # Ver para mostrar cuando el juego termine
         super().__init__()
-        self.texture = arcade.load_texture("Restart.png")
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
-        arcade.set_viewport(0, SCREE_WIDHT, 0, SCREE_HEIGHT)
+        self.texture = arcade.load_texture(archivo_de_imagen)
+        # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
+        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
+        view_l = MyGame().view_left
+        view_b = MyGame().view_bottom
+        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
         Audio().solo_una_vez("GameOver.mp3")
 
     def on_draw(self):
-        """ Draw this view """
+        # dibujar esta vista
         arcade.start_render()
-        self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
+        view_l = MyGame().view_left
+        view_b = MyGame().view_bottom
+        self.texture.draw_sized(view_l / 2, view_b / 2,
                                 SCREE_WIDHT, SCREE_HEIGHT)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ If the user presses the mouse button, re-start the game. """
+        # Si el usuario presiona el botón del mouse, reinicie el juego
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
+
 
 class Ventana_Ganador(arcade.View):
     """ Ver para mostrar cuando gane el juego """
 
-    def __init__(self):
-        """ This is run once when we switch to this view """
+    def __init__(self, archivo_de_imagen):
+        """ Esto se ejecuta una vez cuando cambiamos a esta vista """
         super().__init__()
-        self.texture = arcade.load_texture("ganador.jpg")
+        self.texture = arcade.load_texture(archivo_de_imagen)
 
-        # Reset the viewport, necessary if we have a scrolling game and we need
-        # to reset the viewport back to the start so we can see what we draw.
+        # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
+        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
         arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
 
-#        youwin = MyGame()
-#        youwin.("YouWin.mp3")
-#        Audio().musica_fondo()
-
     def on_draw(self):
-        """ Draw this view """
+        # dibujar esta vista
         arcade.start_render()
         self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
                                 SCREE_WIDHT, SCREE_HEIGHT)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ If the user presses the mouse button, re-start the game. """
+        # Si el usuario presiona el botón del mouse, reinicie el juego
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
-
-
-
-#        if self.score == 9:
-#            view = Ventana_Ganador()
-#            self.window.show_view(view)
-
-# --- Administrar desplazamiento ---
-
-# Rastrear si necesitamos cambiar la ventana gráfica
-    #changed = False
-
-# Desplazarse a la izquierda
-     #left_boundary = self.view_left + LEFT_VIEWPORT_MARGIN
-     #if self.player_sprite.left < left_boundary:
-        #self.view_left -= left_boundary - self.player_sprite.left
-         #changed = True
-
-# Desplazarse a la derecha
-     #right_boundary = self.view_left + SCREE_WIDHT - RIGHT_VIEWPORT_MARGIN
-     #if self.player_sprite.right > right_boundary:
-       #self.view_left += self.player_sprite.right - right_boundary
-        #changed = True
-
-#Desplazarse hacia arriba
-     #top_boundary = self.view_bottom + SCREE_HEIGHT - TOP_VIEWPORT_MARGIN
-     #if self.player_sprite.top > top_boundary:
-         #self.view_bottom += self.player_sprite.top - top_boundary
-         #changed = True
-
-# Desplazarse hacia abajo
-# bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
-# if self.player_sprite.bottom < bottom_boundary:
-# self.view_bottom -= bottom_boundary - self.player_sprite.bottom
-# changed = True
-
-# if changed:
-# Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
-# no se alineen en la pantalla
-# self.view_bottom = int(self.view_bottom)
-# self.view_left = int(self.view_left)
-
-# Do the scrolling
-# arcade.set_viewport(self.view_left,
-# SCREE_WIDHT + self.view_left,
-# self.view_bottom,
-# SCREE_HEIGHT + self.view_bottom)
-
-
 
 
 def main():
