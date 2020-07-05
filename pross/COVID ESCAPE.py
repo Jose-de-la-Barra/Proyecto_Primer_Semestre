@@ -40,6 +40,7 @@ TOP_VIEWPORT_MARGIN = 0
 MUSIC_VOLUME = 0.03
 MUSIC_VOLUME_HIGH = 0.25
 
+
 class InstructionView(arcade.View):
 
     def __init__(self):
@@ -129,7 +130,7 @@ class MyGame(arcade.View):
         self.view_bottom = 0
         self.view_left = 0
 
-        self.score = 0  # Lleva un registro de la puntuaciónç
+        self.score = 0  # Lleva un registro de la puntuación
 
     def setup(self):  # inicializar las listas
         self.player_list = arcade.SpriteList()  # VA PERMITIR CONTROLAR COLISIONES/MOVIMIENTO
@@ -466,7 +467,6 @@ class MyGame(arcade.View):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.wall_list)
 
         Audio().solo_una_vez("TheVirusIsComing.mp3")
-        Audio().on_update(delta_time=True)
 
     def gravedad(self):
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite,
@@ -642,27 +642,12 @@ class Audio:
         self.reproduce = arcade.Sound(archivo_audio, streaming=True)
 
         # definir volumen distinto para cada archivo
-        if archivo_audio == "Musica_ganador.mp3" or archivo_audio == "vacuna.mp3" or archivo_audio == "salto.mp3" or archivo_audio == "Recoger.mp3" or archivo_audio == "cancion.mp3":
+        if archivo_audio == "Musica_ganador.mp3" or archivo_audio == "vacuna.mp3" or archivo_audio == "salto.mp3" or\
+                archivo_audio == "Recoger.mp3" or archivo_audio == "cancion.mp3":
             self.reproduce.play(MUSIC_VOLUME)
         else:
             self.reproduce.play(MUSIC_VOLUME_HIGH)
         time.sleep(0.03)
-
-    def on_update(self, delta_time):
-
-        self.music_list = ["cancion.mp3", "Musica_ganador.mp3"]
-        if self.rep:
-            self.rep.stop()
-
-#        score = MyGame()
-#        if score.score < 2:
-#            self.indice = 0
-#        else:
-#            self.indice = 1
-
-        self.rep = arcade.Sound(self.music_list[self.indice], streaming=True)
-        self.rep.play(MUSIC_VOLUME)
-
 
 class GameOverView(arcade.View):
     """ View to show when game is over """
@@ -717,6 +702,8 @@ class Ventana_Ganador(arcade.View):
         game_view.setup()
         self.window.show_view(game_view)
 
+
+Audio().solo_una_vez("cancion.mp3")
 
 def main():
     window = arcade.Window(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
