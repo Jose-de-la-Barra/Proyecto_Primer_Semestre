@@ -3,6 +3,7 @@ import random
 import time
 import os
 
+
 # Dimensiones pantalla
 SCREE_WIDHT = 1300
 SCREE_HEIGHT = 700
@@ -26,10 +27,6 @@ MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
 VIRUS2_SPEED = 2.3
 
-
-# arcade.play_sound(arcade.load_sound("cancion.mp3"))
-
-
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
 LEFT_VIEWPORT_MARGIN = 200
@@ -44,7 +41,6 @@ MUSIC_VOLUME_HIGH = 0.25
 class InstructionView(arcade.View):
 
     def __init__(self):
-        """ This is run once when we switch to this view """
         super().__init__()
         self.texture = arcade.load_texture("Instrucciones.jpg")
         # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
@@ -62,6 +58,7 @@ class InstructionView(arcade.View):
         game_view = MyGame()
         game_view.setup()
         self.window.show_view(game_view)
+
 
 class Virus(arcade.Sprite):
 
@@ -109,6 +106,7 @@ class MyGame(arcade.View):
         self.objetos_list = None
         self.decoracion_list = None
         self.vacuna_list = None
+        self.muralla_list = None
 
         self.player_sprite = None  # VARIABLE DEL SPRITE
         self.virus_sprite = None  # VARIABLE DEL SPRITE
@@ -290,8 +288,9 @@ class MyGame(arcade.View):
             self.wall_list.append(piso)
 
         # asignar coordenadas fijas a el piso flotante
-        coordenas_pisoflotante = [[40, 460], [185, 360],[210, 550], [330, 440],[400, 230],[480, 550],[600, 390], [730, 550],  [820, 230],
-                                   [840, 430],[1000, 550], [1020, 330], [1140, 435],[1200, 250], [1250, 550]]
+        coordenas_pisoflotante = [[40, 460], [185, 360], [210, 550], [330, 440], [400, 230], [480, 550], [600, 390],
+                                  [730, 550], [820, 230], [840, 430], [1000, 550], [1020, 330], [1140, 435],
+                                  [1200, 250], [1250, 550]]
         coordenas_para_los_objetos = []
         n = 1
         cosas = ["alcohol gel.png", "guantes.png", "mascara.png"]
@@ -339,7 +338,7 @@ class MyGame(arcade.View):
             self.decoracion_list.append(self.decoracion_sprite)
             cont = 850
 
-        for i in range(94,1080,80):
+        for i in range(94, 1080, 80):
             muralla = arcade.Sprite("columna.png", escala_piso)
             muralla.center_x = 1325
             muralla.center_y = i
@@ -425,8 +424,10 @@ class MyGame(arcade.View):
         # plataformas
         agr_x = 1350
 
-        coordenas_pisoflotante2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
-                                  [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
+        coordenas_pisoflotante2 = [[1260 + agr_x, 460], [1115 + agr_x, 360], [1090 + agr_x, 550], [970 + agr_x, 440],
+                                   [900 + agr_x, 230], [820 + agr_x, 550], [700 + agr_x, 390], [570 + agr_x, 550],
+                                   [480 + agr_x, 230], [460 + agr_x, 430], [300 + agr_x, 550], [280 + agr_x, 330],
+                                   [160 + agr_x, 435], [100 + agr_x, 250], [60 + agr_x, 550]]
 
         coordenas_para_los_objetos = []
         n = 1
@@ -565,8 +566,10 @@ class MyGame(arcade.View):
         agr_x = 1350
         cte_eje_y = 64
         if self.score == 18:  # para que aparezca la vacuna
-            cordenada_vacuna2 = [[1260 + agr_x, 460], [1115 + agr_x, 360],[1090 + agr_x, 550], [970 + agr_x, 440], [900 + agr_x, 230],[820 + agr_x, 550],[700 + agr_x, 390],[570 + agr_x, 550],
-                                  [480 + agr_x, 230],[460 + agr_x, 430],[300 + agr_x, 550],[280 + agr_x, 330], [160 + agr_x, 435], [100 + agr_x, 250],[60 + agr_x, 550]]
+            cordenada_vacuna2 = [[1260 + agr_x, 460], [1115 + agr_x, 360], [1090 + agr_x, 550], [970 + agr_x, 440],
+                                 [900 + agr_x, 230], [820 + agr_x, 550], [700 + agr_x, 390], [570 + agr_x, 550],
+                                 [480 + agr_x, 230], [460 + agr_x, 430], [300 + agr_x, 550], [280 + agr_x, 330],
+                                 [160 + agr_x, 435], [100 + agr_x, 250], [60 + agr_x, 550]]
             k = random.choice(cordenada_vacuna2)
             vacuna2 = arcade.Sprite("VACUNA.png", 0.1)
             vacuna2.position = k[0], k[1] + cte_eje_y
@@ -619,14 +622,15 @@ class MyGame(arcade.View):
         if changed:
             # Solo desplazamiento en enteros. De lo contrario, terminamos con píxeles que
             # no se alineen en la pantalla
-             self.view_bottom = int(self.view_bottom)
-             self.view_left = int(self.view_left)
+            self.view_bottom = int(self.view_bottom)
+            self.view_left = int(self.view_left)
 
         # Hacer el seguimiento
         arcade.set_viewport(self.view_left,
                             SCREE_WIDHT + self.view_left,
                             self.view_bottom,
                             SCREE_HEIGHT + self.view_bottom)
+
 
 class Audio:
     def __init__(self):
@@ -650,8 +654,8 @@ class Audio:
             self.reproduce.play(MUSIC_VOLUME_HIGH)
         time.sleep(0.03)
 
+
 class GameOverView(arcade.View):
-    """ View to show when game is over """
 
     def __init__(self, archivo_de_imagen):
         # Ver para mostrar cuando el juego termine
@@ -703,12 +707,13 @@ class Ventana_Ganador(arcade.View):
 
 Audio().solo_una_vez("cancion.mp3")
 
+
 def main():
     window = arcade.Window(SCREE_WIDHT, SCREE_HEIGHT, SCREE_TITLE)
     start_view = InstructionView()
     window.show_view(start_view)
-    #start_view.setup()
     arcade.run()
+
 
 if __name__ == "__main__":
     main()
