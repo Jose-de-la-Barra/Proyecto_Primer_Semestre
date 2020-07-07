@@ -23,8 +23,8 @@ escala_sol = 0.5
 JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
-VIRUS_SPEED = .1
-VIRUS2_SPEED = .1
+VIRUS_SPEED = 2
+VIRUS2_SPEED = 2.3
 
 
 # arcade.play_sound(arcade.load_sound("cancion.mp3"))
@@ -534,6 +534,8 @@ class MyGame(arcade.View):
             Audio().solo_una_vez("vacuna.mp3")
             self.score += 1  # Agrega uno al puntaje
 
+            Audio().solo_una_vez("Gokillthevirus.mp3")
+
         if self.score >= 10:
             for virus2 in self.virus2_list:
                 virus2.follow_sprite(self.player_sprite)
@@ -583,7 +585,6 @@ class MyGame(arcade.View):
         elif self.score == 20 and virus_hit2:
             view = Ventana_Ganador("WINNER.jpg")
             Audio().solo_una_vez("boing.mp3")
-            Audio().solo_una_vez("YouWin.mp3")
             self.window.show_view(view)
 
         # Para que pierda cuando toque el agua
@@ -656,20 +657,16 @@ class GameOverView(arcade.View):
         # Ver para mostrar cuando el juego termine
         super().__init__()
         self.texture = arcade.load_texture(archivo_de_imagen)
-        # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
-        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
-        view_l = MyGame().view_left
-        view_b = MyGame().view_bottom
-        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
         Audio().solo_una_vez("GameOver.mp3")
 
+    def on_show(self):
+        arcade.set_background_color(arcade.color.BLACK)
+
     def on_draw(self):
+        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
+        arcade.set_viewport(0, SCREE_WIDHT, 0, SCREE_HEIGHT)
         # dibujar esta vista
-        arcade.start_render()
-        view_l = MyGame().view_left
-        view_b = MyGame().view_bottom
-        self.texture.draw_sized(view_l / 2, view_b / 2,
-                                SCREE_WIDHT, SCREE_HEIGHT)
+        self.texture.draw_sized(SCREE_WIDHT/2, SCREE_HEIGHT/2, SCREE_WIDHT, SCREE_HEIGHT)
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         # Si el usuario presiona el botón del mouse, reinicie el juego
@@ -682,17 +679,18 @@ class Ventana_Ganador(arcade.View):
     """ Ver para mostrar cuando gane el juego """
 
     def __init__(self, archivo_de_imagen):
-        """ Esto se ejecuta una vez cuando cambiamos a esta vista """
+        # Ver para mostrar cuando el juego termine
         super().__init__()
         self.texture = arcade.load_texture(archivo_de_imagen)
+        Audio().solo_una_vez("YouWin.mp3")
 
-        # Restablecer la ventana gráfica, necesaria si tenemos un juego de desplazamiento y necesitamos
-        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
-        arcade.set_viewport(0, SCREE_WIDHT - 1, 0, SCREE_HEIGHT - 1)
+    def on_show(self):
+        arcade.set_background_color(arcade.color.BLACK)
 
     def on_draw(self):
+        # para restablecer la ventana gráfica al inicio para que podamos ver lo que dibujamos.
+        arcade.set_viewport(0, SCREE_WIDHT, 0, SCREE_HEIGHT)
         # dibujar esta vista
-        arcade.start_render()
         self.texture.draw_sized(SCREE_WIDHT / 2, SCREE_HEIGHT / 2,
                                 SCREE_WIDHT, SCREE_HEIGHT)
 
