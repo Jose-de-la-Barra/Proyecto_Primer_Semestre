@@ -25,7 +25,7 @@ JUMP_SPEED = 15
 GRAVITY = 3
 MOVEMENT_SPEED = 5
 VIRUS_SPEED = 2
-VIRUS2_SPEED = 2.3
+VIRUS2_SPEED = 2.5
 
 # Cuántos píxeles para mantener como margen mínimo entre el personaje
 # y el borde de la pantalla.
